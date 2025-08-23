@@ -7,6 +7,7 @@
 
 - name: add flatpak remote
   ansible.builtin.command: flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+  become: true
 
 - name: Install firefox/thunderbird flatpak
   community.general.flatpak:

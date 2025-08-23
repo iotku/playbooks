@@ -7,7 +7,7 @@
       # Neovim dependencies 
       - openjdk-21-jdk
       - lua5.4
-      - rustup
+      - rustup # todo sync rustup
       - ripgrep
       - fd-find 
       - fzf 
