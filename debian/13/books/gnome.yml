@@ -3,7 +3,6 @@
   become: true
   package:
     name:
- #     - python3-psutil
       - dconf-cli
 
 - name: install flatpak plugin for gnome-software
@@ -11,17 +10,6 @@
   package:
     name:
       - gnome-software-plugin-flatpak
-
-- name: Set dark colorscheme
-  dconf:
-    key: "/org/gnome/desktop/interface/color-scheme"
-    value: "'prefer-dark'"
-
-- name: Set favorite applications
-  dconf:
-    key: "/org/gnome/shell/favorite-apps"
-    value: "['org.mozilla.firefox.desktop', 'org.mozilla.Thunderbird.desktop', 'org.gnome.Software.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.Calculator.desktop', 'org.gnome.Nautilus.desktop']"
-    state: present
 
 - name: install extensions
   become: true
@@ -37,8 +25,16 @@
     key: "/org/gnome/shell/enabled-extensions"
     value: "['tiling-assistant@leleat-on-github', 'ubuntu-appindicators@ubuntu.com', 'dash-to-dock@micxgx.gmail.com', 'caffeine@patapon.info']"
 
-#   - name: restart gnome-shell
-#     ansible.builtin.command: killall -HUP gnome-shell
+- name: Set favorite applications
+  dconf:
+    key: "/org/gnome/shell/favorite-apps"
+    value: "['org.mozilla.firefox.desktop', 'org.mozilla.Thunderbird.desktop', 'org.gnome.Software.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.Calculator.desktop', 'org.gnome.Nautilus.desktop']"
+    state: present
+
+- name: Set dark colorscheme
+  dconf:
+    key: "/org/gnome/desktop/interface/color-scheme"
+    value: "'prefer-dark'"
 
 - name: dash-to-dock move left
   dconf:
