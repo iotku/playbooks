@@ -3,6 +3,8 @@
   package:
     name:
       - flatpak
+      - podman
+      - crun
       - xclip
 
 - name: add flatpak remote
@@ -20,3 +22,24 @@
   apt:
     name: firefox-esr
     state: absent
+
+
+- name: Install Additional flatpaks
+  community.general.flatpak:
+    name:
+      - com.logseq.Logseq
+      - com.sublimemerge.App
+      - net.ankiweb.Anki
+      # Communication Platforms
+      - org.telegram.desktop
+      - com.discordapp.Discord
+      - us.zoom.Zoom
+      - info.mumble.Mumble
+      # Compatibility
+      - com.usebottles.bottles
+      - io.podman_desktop.PodmanDesktop
+      - it.mijorus.gearlever # GTK Manage Appimages
+      # Media
+      - com.calibre_ebook.calibre
+      - com.yacreader.YACReader
+      - com.obsproject.Studio
