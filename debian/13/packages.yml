@@ -1,0 +1,25 @@
+---
+- hosts: localhost
+  tasks:
+    - name: install packages
+      become: true
+      package:
+        name:
+          - flatpak
+          - xclip
+        
+
+    - name: add flatpak remote
+      ansible.builtin.command: flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+    - name: Install firefox/thunderbird flatpak
+      community.general.flatpak:
+        name:
+          - org.mozilla.firefox
+          - org.mozilla.Thunderbird
+    
+    - name: Ensure firefox-esr is removed
+      become: true
+      apt:
+        name: firefox-esr
+        state: absent
