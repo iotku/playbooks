@@ -1,0 +1,13 @@
+- name: Download zed release tarball
+  get_url:
+    url: "https://zed.dev/api/releases/stable/latest/zed-linux-x86_64.tar.gz"
+    dest: "/tmp/zed-linux-x86_64.tar.gz"
+    mode: '0644'
+
+- name: Extract zed into ~/.local
+  unarchive:
+    src: "/tmp/zed-linux-x86_64.tar.gz"
+    dest: "{{ lookup('env','HOME') }}/.local"
+    remote_src: true
+    extra_opts:
+      - "--strip-components=1"
