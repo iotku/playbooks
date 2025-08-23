@@ -7,10 +7,10 @@
   ansible.builtin.command: dpkg --print-architecture
   register: arch_result
 
-# Generally non-free/non-free-firmware are enabled by default now
+# Generally non-free-firmware is enabled by default now
 - name: Add contrib repository to sources list
   ansible.builtin.apt_repository:
-    repo: "deb https://deb.debian.org/debian/ {{ distro_codename.stdout }} contrib"
+    repo: "deb https://deb.debian.org/debian/ {{ distro_codename.stdout }} non-free contrib"
     state: present
     filename: contrib
   become: true
