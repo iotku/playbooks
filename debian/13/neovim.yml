@@ -1,0 +1,24 @@
+---
+- hosts: localhost
+  tasks:
+    - name: install dependencies
+      become: true
+      package:
+        name:
+          - git
+          - zsh
+
+    - name: Set fact for local git folder ~/home
+      set_fact:
+        local_git_dir: "{{ lookup('env','HOME') }}/git"
+
+    - name: Ensure ~/git exists 
+      file:
+        path: "{{ local_git_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Read-onlyish git checkout from github
+      ansible.builtin.git:
+        repo: https://github.com/iotku/dotFiles.git
+        dest: "{{ local_git_dir }}/iotku-dotfiles"

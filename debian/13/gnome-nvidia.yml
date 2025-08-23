@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  tasks:
+
+- name: install common packages
+  import_playbook: packages.yml
+
+- name: install nvidia driver
+  import_playbook: nvidia.yml
+
+- name: install gnome and customize
+  import_playbook: gnome.yml
+
