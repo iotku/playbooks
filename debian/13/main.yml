@@ -1,0 +1,45 @@
+---
+- hosts: localhost
+  gather_facts: true
+  vars:
+    books_dir: "books"
+
+  tasks:
+
+    - name: Find all YAML files in books directory
+      find:
+        paths: "{{ books_dir }}"
+        patterns: "*.yml"
+        file_type: file
+      register: found_books
+
+    - name: Build list of book names (without .yml)
+      set_fact:
+        available_books: "{{ found_books.files
+                             | map(attribute='path')
+                             | map('basename')
+                             | map('regex_replace','\\.yml$' '')
+                             | list }}"
+
+    - name: Show available books to the user and ask which to run
+      pause:
+        prompt: "Which books do you want to run? (Space separated) \nOptions: {{ available_books | join(' ') }}"
+      register: user_choice
+
+    - name: Normalize user input into a list
+      set_fact:
+        books_to_run: "{{ user_choice.user_input.replace(':','').split() | map('trim') | list }}"
+
+    - name: Validate user input
+      assert:
+        that:
+          - item in available_books
+        msg: "{{ item }} is not a valid book name!"
+      loop: "{{ books_to_run }}"
+
+    - name: Run selected books
+      include_tasks: "{{ books_dir }}/{{ item }}.yml"
+      loop: "{{ books_to_run }}"
+      loop_control:
+        label: "{{ item }}"
+

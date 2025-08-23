@@ -1,0 +1,63 @@
+- name: install dependencies
+  become: true
+  package:
+    name:
+      - git
+      - zsh
+      # Neovim dependencies 
+      - openjdk-21-jdk
+      - lua5.4
+      - rustup
+      - ripgrep
+      - fd-find 
+      - fzf 
+      - python3-venv 
+      - golang 
+      - npm 
+
+- name: Get invoking user
+  set_fact:
+    invoking_user: "{{ lookup('env', 'USER') }}"
+    invoking_home: "{{ lookup('env', 'HOME') }}"
+
+- name: Abort if running as root
+  fail:
+    msg: "Refusing to continue: playbook invoked as root, changing root's shell is dangerous."
+  when: invoking_user == "root"
+
+- name: Ensure default shell is /usr/bin/zsh for "{{ invoking_user }}"
+  ansible.builtin.user:
+    name: "{{ invoking_user }}"
+    shell: /usr/bin/zsh
+  become: true
+
+- name: Set local_git_dir fact
+  set_fact:
+    local_git_dir: "{{ lookup('env','HOME') }}/git"
+
+- name: Set repo fact (using local_git_dir)
+  set_fact:
+    repo: "{{ local_git_dir }}/iotku-dotfiles"
+
+- name: Ensure ~/git exists 
+  file:
+    path: "{{ local_git_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Read-onlyish git checkout from github
+  ansible.builtin.git:
+    repo: https://github.com/iotku/dotFiles.git
+    dest: "{{ repo }}"
+
+- name: install zsh dotfiles
+  command: ./install-zsh.sh
+  args:
+    chdir: "{{ repo }}/zsh"
+
+- name: install nvim dotfiles
+  command: ./install-nvim.sh
+  args:
+    chdir: "{{ repo }}/nvim"
+
+
