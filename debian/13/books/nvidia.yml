@@ -15,6 +15,13 @@
     filename: contrib
   become: true
 
+- name: Add non-free repository to sources list
+  ansible.builtin.apt_repository:
+    repo: "deb https://deb.debian.org/debian/ {{ distro_codename.stdout }} non-free"
+    state: present
+    filename: non-free
+  become: true
+
 - name: Add Nvidia container debian repo
   deb822_repository:
     name: nvidia-container-toolkit
