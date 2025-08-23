@@ -17,26 +17,10 @@
     key: "/org/gnome/desktop/interface/color-scheme"
     value: "'prefer-dark'"
 
-- name: Read favorite-apps
+- name: Set favorite applications
   dconf:
     key: "/org/gnome/shell/favorite-apps"
-    state: read
-  register: dconf_result
-
-- name: Ensure favorite-apps is a list
-  set_fact:
-    current_list: "{{ dconf_result.value | from_yaml }}"
-
-- name: Remove apps and add Flatpak ones
-  set_fact:
-    current_list: >-
-      {{ ['org.mozilla.firefox.desktop', 'org.mozilla.Thunderbird.desktop'] +
-         (current_list | difference(['firefox.desktop', 'org.gnome.Evolution.desktop', 'org.mozilla.firefox.desktop', 'org.mozilla.Thunderbird.desktop'])) }}
-
-- name: Set updated dconf list
-  dconf:
-    key: "/org/gnome/shell/favorite-apps"
-    value: "{{ '[' + (current_list | map('regex_replace', '^(.*)$', \"'\\1'\") | join(', ')) + ']' }}"
+    value: "['org.mozilla.firefox.desktop', 'org.mozilla.Thunderbird.desktop', 'org.gnome.Software.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.Calculator.desktop', 'org.gnome.Nautilus.desktop']"
     state: present
 
 - name: install extensions
