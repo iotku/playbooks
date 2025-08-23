@@ -10,7 +10,7 @@
 # Generally non-free-firmware is enabled by default now
 - name: Add contrib repository to sources list
   ansible.builtin.apt_repository:
-    repo: "deb https://deb.debian.org/debian/ {{ distro_codename.stdout }} non-free contrib"
+    repo: "deb https://deb.debian.org/debian/ {{ distro_codename.stdout }} contrib"
     state: present
     filename: contrib
   become: true
