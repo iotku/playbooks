@@ -3,6 +3,8 @@
   gather_facts: true
   vars:
     books_dir: "books"
+  environment:
+    DEBIAN_FRONTEND: noninteractive
 
   tasks:
 
