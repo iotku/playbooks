@@ -46,6 +46,17 @@
     LC_TIME = "en_US.UTF-8";
   };
 
+  i18n.inputMethod = {
+    enable = true;
+    type = "fcitx5";
+    fcitx5.addons = with pkgs; [
+      fcitx5-mozc
+      fcitx5-gtk
+    ];
+  };
+
+  i18n.inputMethod.fcitx5.waylandFrontend = true; # Supress wayland messages
+
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
@@ -117,7 +128,35 @@
     nerd-fonts.hack
     nerd-fonts.jetbrains-mono
     nerd-fonts.profont
+    noto-fonts # These are basically identical to source-han for CJK??
+    noto-fonts-emoji
+    # CJK Fonts
+    source-han-sans
+    source-han-mono
+    source-han-serif
+    source-han-code-jp
   ];
+
+  # Font Styling
+  fonts = {
+    fontconfig = {
+      # Fixes pixelation
+      antialias = true;
+  
+      # Fixes antialiasing blur
+      hinting = {
+        enable = true;
+        style = "full"; # no difference
+        autohint = true; # no difference
+      };
+  
+      subpixel = {
+        # Makes it bolder
+        rgba = "rgb";
+        lcdfilter = "default"; # no difference
+      };
+    };
+  };
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -203,7 +242,13 @@
 
   services.flatpak.update.auto = {
     enable = true;
-    onCalendar = "weekly"; # Default value
+    onCalendar = "daily"; # Default value
+  };
+
+  # Wait for network before running flatpak update
+  systemd.services."flatpak-managed-install-timer" = {
+    wants = [ "network-online.target" ];
+    after = [ "network-online.target" ];
   };
 
   services.flatpak.packages = [
@@ -250,6 +295,12 @@
     distrobox
     bitwarden-desktop
     ghostty
+ 
+    # for niri
+    alacritty
+    fuzzel
+    swaylock
+    waybar
 
     # Multimedia
     supersonic
@@ -258,6 +309,9 @@
 
     # Gnome
     gnome-tweaks
+    gnomeExtensions.dash-to-dock
+    gnomeExtensions.kimpanel
+    gnomeExtensions.appindicator
 
     # Hardware specific
     solaar # Logitech Mice
