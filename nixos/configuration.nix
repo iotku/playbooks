@@ -9,6 +9,7 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./wireguard.nix
+      ./homemanager.nix
     ];
 
   # Bootloader.
@@ -315,6 +316,7 @@
     gnomeExtensions.dash-to-dock
     gnomeExtensions.kimpanel
     gnomeExtensions.appindicator
+    dconf2nix
 
     # Hardware specific
     solaar # Logitech Mice
