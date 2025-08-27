@@ -289,6 +289,7 @@
     nnn
     git
     git-lfs
+    unzip
     btop
     rclone
     lftp
@@ -306,6 +307,8 @@
     supersonic
     mpv
     jellyfin-mpv-shim
+    yt-dlp
+    streamlink
 
     # Gnome
     gnome-tweaks
@@ -332,8 +335,10 @@
     lua
     jdk
     maven
+    python3
     zig
     rustup
+    clang-tools
     nodejs
     powershell # why not
   ];
