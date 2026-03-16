@@ -1,11 +1,11 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.6.0";
 
     lanzaboote = {
-      url = "github:nix-community/lanzaboote/v0.4.2";
+      url = "github:nix-community/lanzaboote/v0.4.3";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -35,9 +35,7 @@
                   zed-editor = unstablePkgs.zed-editor;
                   reaper = unstablePkgs.reaper;
 		  vscode = unstablePkgs.vscode;
-		  android-studio = unstablePkgs.android-studio;
-		  jetbrains.idea-community = unstablePkgs.jetbrains.idea-community;
-		  jetbrains.pycharm-community = unstablePkgs.jetbrains.pycharm-community;
+		  sm64coopdx = unstablePkgs.sm64coopdx;
                 })
               ];
               config.allowUnfree = true;

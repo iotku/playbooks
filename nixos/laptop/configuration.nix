@@ -70,6 +70,12 @@
     enable = true;
   };
 
+  programs.steam.enable = true;
+
+  programs.nix-ld = {
+  	enable = true;
+	libraries = pkgs.steam-run.args.multiPkgs pkgs;
+	};
   # Copy monitor configurationg from `luser`, ideally we would use a varible for the user.
   systemd.services.copyGdmMonitorsXml = {
     description = "Copy monitors.xml to GDM config";
@@ -109,7 +115,7 @@
     nerd-fonts.jetbrains-mono
     nerd-fonts.profont
     noto-fonts # These are basically identical to source-han for CJK??
-    noto-fonts-emoji
+    noto-fonts-color-emoji
     # CJK Fonts
     source-han-sans
     source-han-mono
@@ -268,6 +274,7 @@
   environment.systemPackages = with pkgs; [
     neovim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     tmux
+    fzf
     nnn
     git
     git-lfs
@@ -300,6 +307,8 @@
     gnomeExtensions.appindicator
     dconf2nix
 
+    podman-compose
+
     # Hardware specific
     solaar # Logitech Mice
     deskflow # KB/Mouse Sharing
@@ -311,11 +320,8 @@
     reaper-reapack-extension
     # Unstable overlays
     readest
-    zed-editor
+   # zed-editor
     vscode
-    android-studio
-    jetbrains.idea-community
-    jetbrains.pycharm-community
   #  wget
     # Programming Languages
     jetbrains-toolbox
@@ -328,6 +334,8 @@
     clang-tools
     nodejs
     powershell # why not
+    sm64coopdx
+    antimicrox
   ];
 
   programs.zsh = {
