@@ -46,6 +46,8 @@
     LC_TIME = "en_US.UTF-8";
   };
 
+  security.allowUserNamespaces = true;
+  
   i18n.inputMethod = {
     enable = true;
     type = "fcitx5";
@@ -125,6 +127,10 @@
     source-han-mono
     source-han-serif
     source-han-code-jp
+    # Good TTF font for supersonic/Japanse fallback
+    mplus-outline-fonts.githubRelease 
+    #/run/current-system/sw/share/X11/fonts/Mplus2-Black.ttf
+    #/run/current-system/sw/share/X11/fonts/Mplus2-Regular.ttf
   ];
 
   # Font Styling
@@ -243,6 +249,7 @@
 
   services.flatpak.packages = [
       "org.deskflow.deskflow" # KB/Mouse Sharing
+      "com.github.tchx84.Flatseal" # Flatpak sandbox configuration
       # Browser / Email
       "org.mozilla.firefox" # xdg-settings set default-web-browser org.mozilla.firefox.desktop
       "org.mozilla.Thunderbird"
@@ -311,6 +318,7 @@
     gnomeExtensions.dash-to-dock
     gnomeExtensions.kimpanel
     gnomeExtensions.appindicator
+    gnomeExtensions.gsconnect
     dconf2nix
 
     podman-compose
@@ -329,6 +337,7 @@
     vscode
     # Programming Languages
     jetbrains-toolbox
+    gcc
     go
     lua
     maven
@@ -373,6 +382,13 @@
 
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 24800 ]; # open port for deskflow server
+  # Firewall ports for KDEConnect/GSconnect
+  networking.firewall.allowedTCPPortRanges = [ 
+  	{ from = 1716; to = 1764; } 
+  ];
+  networking.firewall.allowedUDPPortRanges = [ 
+  	{ from = 1716; to = 1764; } 
+  ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;

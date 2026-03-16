@@ -113,7 +113,7 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/shell" = {
-      enabled-extensions = [ "dash-to-dock@micxgx.gmail.com" "kimpanel@kde.org" "appindicatorsupport@rgcjonas.gmail.com" ];
+      enabled-extensions = [ "dash-to-dock@micxgx.gmail.com" "kimpanel@kde.org" "appindicatorsupport@rgcjonas.gmail.com" "gsconnect@andyholmes.github.io" ];
       favorite-apps = [ "org.mozilla.firefox.desktop" "org.mozilla.Thunderbird.desktop" "org.gnome.Calendar.desktop" "org.gnome.Music.desktop" "org.gnome.Nautilus.desktop" ];
     };
 
