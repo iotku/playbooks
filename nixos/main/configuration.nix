@@ -5,6 +5,7 @@
 
 {
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.download-buffer-size = 134217728;
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
@@ -17,6 +18,7 @@
 
   # Enable NTFS support
   boot.supportedFilesystems = [ "ntfs" ];
+  services.udisks2.enable = true;
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -160,6 +162,10 @@
     variant = "";
   };
 
+  # Virtualization
+  virtualisation.libvirtd.enable = true;
+  programs.virt-manager.enable = true;
+
   # Enable CUPS to print documents.
   services.printing.enable = false;
 
@@ -219,7 +225,7 @@
   users.users.luser = {
     isNormalUser = true;
     description = "Local User";
-    extraGroups = [ "networkmanager" "wheel" "kvm" "adbusers" ];
+    extraGroups = [ "networkmanager" "wheel" "kvm" "adbusers" "libvirtd" ];
     packages = with pkgs; [
     #  thunderbird
     ];
@@ -312,6 +318,9 @@
     jellyfin-mpv-shim
     yt-dlp
     streamlink
+
+    # Communication
+    signal-desktop
 
     # Gnome
     gnome-tweaks
