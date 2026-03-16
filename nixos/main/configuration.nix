@@ -9,7 +9,6 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./wireguard.nix
-      ./homemanager.nix
     ];
 
   # Bootloader.
@@ -19,7 +18,7 @@
   # Enable NTFS support
   boot.supportedFilesystems = [ "ntfs" ];
 
-  networking.hostName = "nixit"; # Define your hostname.
+  networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -58,6 +57,10 @@
 
   i18n.inputMethod.fcitx5.waylandFrontend = true; # Supress wayland messages
 
+  environment.variables = {
+ #   JAVA_TOOL_OPTIONS = "-Dsun.java2d.uiScale=2.0"; # Fractional scaling support when?
+  };
+
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
@@ -66,37 +69,12 @@
     enable = true;
   };
 
-  # Load nvidia driver for Xorg and Wayland
-  services.xserver.videoDrivers = ["nvidia"];
+  programs.steam.enable = false;
 
-  hardware.nvidia = {
-
-    # Modesetting is required.
-    modesetting.enable = true;
-
-    # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
-    # Enable this if you have graphical corruption issues or application crashes after waking
-    # up from sleep. This fixes it by saving the entire VRAM memory to /tmp/ instead 
-    powerManagement.enable = false;
-
-    # Fine-grained power management. Turns off GPU when not in use.
-    # Experimental and only works on modern Nvidia GPUs (Turing or newer).
-    powerManagement.finegrained = false;
-
-    # Don't Use the NVidia open source kernel module (reqs > Pascal)
-    open = false;
-
-    # Enable the Nvidia settings menu `nvidia-settings`.
-    nvidiaSettings = true;
-
-    # Optionally, you may need to select the appropriate driver version for your specific GPU.
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
-  };
-  
-  
-  # Enable gnome
-  services.xserver.displayManager.gdm.enable = true;
-
+  programs.nix-ld = {
+  	enable = true;
+	libraries = pkgs.steam-run.args.multiPkgs pkgs;
+	};
   # Copy monitor configurationg from `luser`, ideally we would use a varible for the user.
   systemd.services.copyGdmMonitorsXml = {
     description = "Copy monitors.xml to GDM config";
@@ -110,13 +88,24 @@
     wantedBy = [ "multi-user.target" ];
   };
 
-  services.xserver.desktopManager.gnome.enable = true;
-  # soon in 25.11+
-  #services.displayManager.gdm.enable = true;
-  #services.desktopManager.gnome.enable = true;
+  # Disable Sleep
+  systemd.sleep.extraConfig = ''
+  AllowSuspend=no
+  AllowHibernation=no
+  AllowHybridSleep=no
+  AllowSuspendThenHibernate=no
+  '';
+
+  # Gnome stuff
+  services.displayManager.gdm.enable = true;
+  services.desktopManager.gnome.enable = true;
   services.gnome.core-developer-tools.enable = true;
   services.gnome.games.enable = false; # No fun allowed
-  
+  services.desktopManager.gnome.extraGSettingsOverrides = ''
+    [org.gnome.mutter]
+    experimental-features=['scale-monitor-framebuffer', 'xwayland-native-scaling']
+  '';
+
   # They see me scrollin' they hatin'
   programs.niri.enable = true;
  
@@ -130,7 +119,7 @@
     nerd-fonts.jetbrains-mono
     nerd-fonts.profont
     noto-fonts # These are basically identical to source-han for CJK??
-    noto-fonts-emoji
+    noto-fonts-color-emoji
     # CJK Fonts
     source-han-sans
     source-han-mono
@@ -224,7 +213,7 @@
   users.users.luser = {
     isNormalUser = true;
     description = "Local User";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "kvm" "adbusers" ];
     packages = with pkgs; [
     #  thunderbird
     ];
@@ -253,6 +242,7 @@
   };
 
   services.flatpak.packages = [
+      "org.deskflow.deskflow" # KB/Mouse Sharing
       # Browser / Email
       "org.mozilla.firefox" # xdg-settings set default-web-browser org.mozilla.firefox.desktop
       "org.mozilla.Thunderbird"
@@ -267,7 +257,7 @@
       # Compatibility
       "com.usebottles.bottles"
       "io.podman_desktop.PodmanDesktop"
-      "it.mijorus.gearlever" # GTK Manage Appimages
+   #   "it.mijorus.gearlever" # GTK Manage Appimages
       # Media
       "com.calibre_ebook.calibre"
       "com.yacreader.YACReader"
@@ -279,14 +269,18 @@
     dockerCompat = true;
   };
 
+  programs.java.enable = true;
+  programs.adb.enable = true;
   # This seems to work fine with podman proper, but not distrobox
-  hardware.nvidia-container-toolkit.enable = true;
+ # hardware.nvidia-container-toolkit.enable = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    wget
     neovim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     tmux
+    fzf
     nnn
     git
     git-lfs
@@ -297,6 +291,7 @@
     distrobox
     bitwarden-desktop
     ghostty
+    wireguard-tools
  
     # for niri
     alacritty
@@ -318,10 +313,11 @@
     gnomeExtensions.appindicator
     dconf2nix
 
+    podman-compose
+
     # Hardware specific
     solaar # Logitech Mice
-    deskflow # KB/Mouse Sharing
-    nvtopPackages.nvidia 
+    #nvtopPackages.nvidia 
 
     # non-free
     reaper
@@ -331,11 +327,10 @@
     readest
     zed-editor
     vscode
-  #  wget
     # Programming Languages
+    jetbrains-toolbox
     go
     lua
-    jdk
     maven
     python3
     zig
@@ -343,6 +338,7 @@
     clang-tools
     nodejs
     powershell # why not
+    antimicrox
   ];
 
   programs.zsh = {
@@ -387,6 +383,5 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.05"; # Did you read the comment?
-
+  system.stateVersion = "25.11"; # Did you read the comment?
 }
