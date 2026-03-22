@@ -32,6 +32,8 @@ with lib.hm.gvariant;
       scaling-factor = mkUint32 1;
       toolbar-style = "text";
       toolkit-accessibility = false;
+      font-antialiasing = "rgba";
+      font-hinting = "slight";
     };
 
     "org/gnome/desktop/peripherals/keyboard" = {
@@ -55,7 +57,7 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/desktop/wm/preferences" = {
-      button-layout = "appmenu:minimize,maximize,close";
+      button-layout = "close,minimize:appmenu";
     };
 
     "org/gnome/epiphany" = {
@@ -120,7 +122,7 @@ with lib.hm.gvariant;
 
     "org/gnome/shell" = {
       enabled-extensions = [ "dash-to-dock@micxgx.gmail.com" "kimpanel@kde.org" "appindicatorsupport@rgcjonas.gmail.com" "gsconnect@andyholmes.github.io" ];
-      favorite-apps = [ "org.mozilla.firefox.desktop" "org.mozilla.Thunderbird.desktop" "org.gnome.Calendar.desktop" "org.gnome.Music.desktop" "org.gnome.Nautilus.desktop" ];
+      favorite-apps = [ "org.mozilla.firefox.desktop" "org.mozilla.Thunderbird.desktop" "org.gnome.Nautilus.desktop" "org.gnome.Calendar.desktop" "org.gnome.Solanum.desktop" "supersonic.desktop" ];
     };
 
     "org/gnome/shell/extensions/dash-to-dock" = {
@@ -132,6 +134,8 @@ with lib.hm.gvariant;
       customize-alphas = true;
       dash-max-icon-size = 32;
       dock-fixed = true;
+      show-mounts = false;
+      show-trash = false;
       dock-position = "LEFT";
       extend-height = true;
       height-fraction = 0.9;

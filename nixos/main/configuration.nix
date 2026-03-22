@@ -62,6 +62,7 @@
   i18n.inputMethod.fcitx5.waylandFrontend = true; # Supress wayland messages
 
   environment.variables = {
+    ELECTRON_OZONE_PLATFORM_HINT = "wayland";
  #   JAVA_TOOL_OPTIONS = "-Dsun.java2d.uiScale=2.0"; # Fractional scaling support when?
   };
 
@@ -117,13 +118,14 @@
   #services.displayManager.sddm.enable = true;
   #services.displayManager.sddm.wayland.enable = true;
   #services.desktopManager.plasma6.enable = true;
-
+  fonts.fontDir.enable = true;
+  fonts.enableDefaultPackages = true;
   fonts.packages = with pkgs; [
     nerd-fonts.hack
     nerd-fonts.jetbrains-mono
     nerd-fonts.profont
-    noto-fonts # These are basically identical to source-han for CJK??
     noto-fonts-color-emoji
+    vista-fonts
     # CJK Fonts
     source-han-sans
     source-han-mono
@@ -135,23 +137,32 @@
     #/run/current-system/sw/share/X11/fonts/Mplus2-Regular.ttf
   ];
 
+  fonts.fontconfig.defaultFonts = {
+    sansSerif = [ "Calibri" "Noto Sans" ];
+    serif = [ "Cambria" "Noto Serif" ];
+    monospace = [ "JetBrainsMono Nerd Font Mono" "Source Han Mono" ];
+    emoji = [ "Noto Color Emoji" ];
+  };
+
   # Font Styling
   fonts = {
     fontconfig = {
       # Fixes pixelation
       antialias = true;
+
+      # Color emojis
+      useEmbeddedBitmaps = true;
   
       # Fixes antialiasing blur
       hinting = {
         enable = true;
-        style = "full"; # no difference
-        autohint = true; # no difference
+        style = "slight";
       };
   
       subpixel = {
         # Makes it bolder
         rgba = "rgb";
-        lcdfilter = "default"; # no difference
+        lcdfilter = "light";
       };
     };
   };
@@ -165,6 +176,7 @@
   # Virtualization
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
+  virtualisation.spiceUSBRedirection.enable = true;
 
   # Enable CUPS to print documents.
   services.printing.enable = false;
@@ -277,6 +289,7 @@
       "com.obsproject.Studio"
   ];
 
+  # Podman containers
   virtualisation.podman = {
     enable = true;
     dockerCompat = true;
@@ -284,8 +297,6 @@
 
   programs.java.enable = true;
   programs.adb.enable = true;
-  # This seems to work fine with podman proper, but not distrobox
- # hardware.nvidia-container-toolkit.enable = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -329,8 +340,11 @@
     gnomeExtensions.appindicator
     gnomeExtensions.gsconnect
     dconf2nix
+    gnome-solanum
 
+    # Virtualization / Containers
     podman-compose
+    spice-gtk
 
     # Hardware specific
     solaar # Logitech Mice
