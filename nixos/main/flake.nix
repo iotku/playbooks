@@ -36,6 +36,7 @@
                   zed-editor = unstablePkgs.zed-editor;
                   reaper = unstablePkgs.reaper;
 		  vscode = unstablePkgs.vscode;
+		  slack = unstablePkgs.slack;
                 })
               ];
               config.allowUnfree = true;

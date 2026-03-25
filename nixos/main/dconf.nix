@@ -121,7 +121,7 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/shell" = {
-      enabled-extensions = [ "dash-to-dock@micxgx.gmail.com" "kimpanel@kde.org" "appindicatorsupport@rgcjonas.gmail.com" "gsconnect@andyholmes.github.io" ];
+      enabled-extensions = [ "dash-to-dock@micxgx.gmail.com" "kimpanel@kde.org" "appindicatorsupport@rgcjonas.gmail.com" "gsconnect@andyholmes.github.io" "tiling-assistant@leleat-on-github" ];
       favorite-apps = [ "org.mozilla.firefox.desktop" "org.mozilla.Thunderbird.desktop" "org.gnome.Nautilus.desktop" "org.gnome.Calendar.desktop" "org.gnome.Solanum.desktop" "supersonic.desktop" ];
     };
 
@@ -144,6 +144,10 @@ with lib.hm.gvariant;
       preferred-monitor = -2;
       preferred-monitor-by-connector = "DP-2";
       transparency-mode = "DYNAMIC";
+    };
+
+    "org/gnome/shell/extensions/tiling-assistant" = {
+      enable-tiling-popup = false;
     };
   };
 }

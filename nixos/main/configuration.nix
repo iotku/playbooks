@@ -339,6 +339,7 @@
     gnomeExtensions.kimpanel
     gnomeExtensions.appindicator
     gnomeExtensions.gsconnect
+    gnomeExtensions.tiling-assistant
     dconf2nix
     gnome-solanum
 
@@ -358,6 +359,7 @@
     readest
     zed-editor
     vscode
+    slack
     # Programming Languages
     jetbrains-toolbox
     gcc
