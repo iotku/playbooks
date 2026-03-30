@@ -19,30 +19,39 @@
         config.allowUnfree = true;
       };
     in {
-      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
-        system = system;
+      nixosConfigurations = {
+        nixos = nixpkgs.lib.nixosSystem {
+          inherit system;
 
-        modules = [
-          nix-flatpak.nixosModules.nix-flatpak
-          ./configuration.nix
-	  home-manager.nixosModules.home-manager
-	  ./home-manager.nix
+          modules = [
+            nix-flatpak.nixosModules.nix-flatpak
+            ./configuration.nix
+            home-manager.nixosModules.home-manager
+            ./home-manager.nix
 
-          {
-            nixpkgs = {
-              overlays = [
-                (final: prev: {
-                  readest = unstablePkgs.readest;
-                  zed-editor = unstablePkgs.zed-editor;
-                  reaper = unstablePkgs.reaper;
-		  vscode = unstablePkgs.vscode;
-		  slack = unstablePkgs.slack;
-                })
-              ];
-              config.allowUnfree = true;
-            };
-          }
-        ];
+            {
+              nixpkgs = {
+                overlays = [
+                  (final: prev: {
+                    readest = unstablePkgs.readest;
+                    zed-editor = unstablePkgs.zed-editor;
+                    reaper = unstablePkgs.reaper;
+          	  vscode = unstablePkgs.vscode;
+          	  slack = unstablePkgs.slack;
+                  })
+                ];
+                config.allowUnfree = true;
+              };
+            }
+          ];
+        };
+
+ 	vfio = nixpkgs.lib.nixosSystem {
+	  inherit system;
+	  modules = [
+	    ./vfio-config.nix
+	  ];
+	};
       };
     };
 }

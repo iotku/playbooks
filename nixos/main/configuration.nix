@@ -12,6 +12,10 @@
       ./wireguard.nix
     ];
 
+  boot.kernelPackages = pkgs.linuxPackages_6_18;
+  boot.kernelModules = [
+    "v4l2loopback"
+  ];
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -137,13 +141,6 @@
     #/run/current-system/sw/share/X11/fonts/Mplus2-Regular.ttf
   ];
 
-  fonts.fontconfig.defaultFonts = {
-    sansSerif = [ "Calibri" "Noto Sans" ];
-    serif = [ "Cambria" "Noto Serif" ];
-    monospace = [ "JetBrainsMono Nerd Font Mono" "Source Han Mono" ];
-    emoji = [ "Noto Color Emoji" ];
-  };
-
   # Font Styling
   fonts = {
     fontconfig = {
@@ -163,6 +160,13 @@
         # Makes it bolder
         rgba = "rgb";
         lcdfilter = "light";
+      };
+
+      defaultFonts = {
+        sansSerif = [ "Calibri" "Noto Sans" ];
+        serif = [ "Cambria" "Noto Serif" ];
+        monospace = [ "JetBrainsMono Nerd Font Mono" "Source Han Mono" ];
+        emoji = [ "Noto Color Emoji" ];
       };
     };
   };
@@ -337,6 +341,7 @@
     gnome-tweaks
     gnomeExtensions.dash-to-dock
     gnomeExtensions.kimpanel
+    gnomeExtensions.caffeine
     gnomeExtensions.appindicator
     gnomeExtensions.gsconnect
     gnomeExtensions.tiling-assistant
@@ -346,6 +351,7 @@
     # Virtualization / Containers
     podman-compose
     spice-gtk
+    pciutils
 
     # Hardware specific
     solaar # Logitech Mice
@@ -373,6 +379,10 @@
     nodejs
     powershell # why not
     antimicrox
+
+    # Language Servers
+    nil
+    nixd
   ];
 
   programs.zsh = {

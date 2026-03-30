@@ -1,6 +1,5 @@
 { config, pkgs, lib, home-manager, ... }:
 {
-  users.users.luser.isNormalUser = true;
   home-manager.users.luser = { pkgs, ... }: {
     imports = [ ./dconf.nix ];
     home.packages = [ pkgs.ncdu ];

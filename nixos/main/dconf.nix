@@ -26,6 +26,7 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/desktop/interface" = {
+      clock-show-weekday = true;
       color-scheme = "prefer-dark";
       cursor-size = 24;
       enable-animations = true;
@@ -34,6 +35,7 @@ with lib.hm.gvariant;
       toolkit-accessibility = false;
       font-antialiasing = "rgba";
       font-hinting = "slight";
+      gtk-enable-primary-paste = false;
     };
 
     "org/gnome/desktop/peripherals/keyboard" = {
@@ -121,8 +123,8 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/shell" = {
-      enabled-extensions = [ "dash-to-dock@micxgx.gmail.com" "kimpanel@kde.org" "appindicatorsupport@rgcjonas.gmail.com" "gsconnect@andyholmes.github.io" "tiling-assistant@leleat-on-github" ];
-      favorite-apps = [ "org.mozilla.firefox.desktop" "org.mozilla.Thunderbird.desktop" "org.gnome.Nautilus.desktop" "org.gnome.Calendar.desktop" "org.gnome.Solanum.desktop" "supersonic.desktop" ];
+      enabled-extensions = [ "dash-to-dock@micxgx.gmail.com" "kimpanel@kde.org" "appindicatorsupport@rgcjonas.gmail.com" "gsconnect@andyholmes.github.io" "tiling-assistant@leleat-on-github" "caffeine@patapon.info" ];
+      favorite-apps = [ "org.mozilla.firefox.desktop" "org.mozilla.Thunderbird.desktop" "org.gnome.Nautilus.desktop" "org.gnome.Calendar.desktop" "org.gnome.Solanum.desktop" "supersonic.desktop" "signal.desktop" "com.discordapp.Discord.desktop" "org.telegram.desktop.desktop" ];
     };
 
     "org/gnome/shell/extensions/dash-to-dock" = {
