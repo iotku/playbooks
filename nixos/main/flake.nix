@@ -10,7 +10,15 @@
     };
   };
 
-  outputs = { self, nixpkgs, unstable, nix-flatpak, home-manager, ... }:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      unstable,
+      nix-flatpak,
+      home-manager,
+      ...
+    }:
     let
       system = "x86_64-linux";
 
@@ -19,45 +27,45 @@
         config.allowUnfree = true;
       };
       commonModules = [
-            nix-flatpak.nixosModules.nix-flatpak
-            ./configuration.nix
-            home-manager.nixosModules.home-manager
-            ./home-manager.nix
+        nix-flatpak.nixosModules.nix-flatpak
+        ./configuration.nix
+        home-manager.nixosModules.home-manager
+        ./home-manager.nix
 
-            {
-              nixpkgs = {
-                overlays = [
-                  (final: prev: {
-                    readest = unstablePkgs.readest;
-                    zed-editor = unstablePkgs.zed-editor;
-                    reaper = unstablePkgs.reaper;
-          	    vscode = unstablePkgs.vscode;
-                  })
-                ];
-                config.allowUnfree = true;
-              };
-            }
-          ];
+        {
+          nixpkgs = {
+            overlays = [
+              (final: prev: {
+                readest = unstablePkgs.readest;
+                zed-editor = unstablePkgs.zed-editor;
+                reaper = unstablePkgs.reaper;
+                vscode = unstablePkgs.vscode;
+              })
+            ];
+            config.allowUnfree = true;
+          };
+        }
+      ];
 
-    in {
+    in
+    {
       nixosConfigurations = {
         blackbox = nixpkgs.lib.nixosSystem {
           inherit system;
-	  modules = commonModules ++ [ ./config-blackbox.nix ];
-         };
+          modules = commonModules ++ [ ./config-blackbox.nix ];
+        };
 
         silversurfer = nixpkgs.lib.nixosSystem {
           inherit system;
-	  modules = commonModules ++ [ ./config-silversurfer.nix ];
-         };
+          modules = commonModules ++ [ ./config-silversurfer.nix ];
+        };
 
- 	vfio = nixpkgs.lib.nixosSystem {
-	  inherit system;
-	  modules = [
-	    ./config-vfio.nix
-	  ];
-	};
+        vfio = nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = [
+            ./config-vfio.nix
+          ];
+        };
       };
     };
 }
-

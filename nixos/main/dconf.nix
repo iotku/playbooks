@@ -9,7 +9,6 @@ with lib.hm.gvariant;
       screen-reader-enabled = false;
     };
 
-
     "org/gnome/desktop/background" = {
       color-shading-type = "solid";
       picture-options = "zoom";
@@ -20,9 +19,19 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/desktop/input-sources" = {
-      mru-sources = [ (mkTuple [ "xkb" "us" ]) ];
-      sources = [ (mkTuple [ "xkb" "us" ]) ];
-      xkb-options = [];
+      mru-sources = [
+        (mkTuple [
+          "xkb"
+          "us"
+        ])
+      ];
+      sources = [
+        (mkTuple [
+          "xkb"
+          "us"
+        ])
+      ];
+      xkb-options = [ ];
     };
 
     "org/gnome/desktop/interface" = {
@@ -92,8 +101,14 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/nautilus/window-state" = {
-      initial-size = mkTuple [ 890 550 ];
-      initial-size-file-chooser = mkTuple [ 890 550 ];
+      initial-size = mkTuple [
+        890
+        550
+      ];
+      initial-size-file-chooser = mkTuple [
+        890
+        550
+      ];
     };
 
     "org/gnome/settings-daemon/plugins/color" = {
@@ -123,8 +138,25 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/shell" = {
-      enabled-extensions = [ "dash-to-dock@micxgx.gmail.com" "kimpanel@kde.org" "appindicatorsupport@rgcjonas.gmail.com" "gsconnect@andyholmes.github.io" "tiling-assistant@leleat-on-github" "caffeine@patapon.info" ];
-      favorite-apps = [ "org.mozilla.firefox.desktop" "org.mozilla.Thunderbird.desktop" "org.gnome.Nautilus.desktop" "org.gnome.Calendar.desktop" "org.gnome.Solanum.desktop" "supersonic.desktop" "signal.desktop" "com.discordapp.Discord.desktop" "org.telegram.desktop.desktop" ];
+      enabled-extensions = [
+        "dash-to-dock@micxgx.gmail.com"
+        "kimpanel@kde.org"
+        "appindicatorsupport@rgcjonas.gmail.com"
+        "gsconnect@andyholmes.github.io"
+        "tiling-assistant@leleat-on-github"
+        "caffeine@patapon.info"
+      ];
+      favorite-apps = [
+        "org.mozilla.firefox.desktop"
+        "org.mozilla.Thunderbird.desktop"
+        "org.gnome.Nautilus.desktop"
+        "org.gnome.Calendar.desktop"
+        "org.gnome.Solanum.desktop"
+        "supersonic.desktop"
+        "signal.desktop"
+        "com.discordapp.Discord.desktop"
+        "org.telegram.desktop.desktop"
+      ];
     };
 
     "org/gnome/shell/extensions/dash-to-dock" = {

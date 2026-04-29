@@ -6,24 +6,27 @@
 let
   winVmName = "win11-ltsc-gpu"; # Virtual Machine name to launch
   vmRebootScript = pkgs.writeShellScriptBin "vm-reboot-on-stop" ''
-          ${pkgs.libvirt}/bin/virsh event --domain ${winVmName} --event lifecycle --loop |
-          while read line; do
-            if echo "$line" | ${pkgs.gnugrep}/bin/grep -q "Stopped"; then
-              ${pkgs.systemd}/bin/systemctl reboot
-            fi
-          done
-	'';
+              ${pkgs.libvirt}/bin/virsh event --domain ${winVmName} --event lifecycle --loop |
+              while read line; do
+                if echo "$line" | ${pkgs.gnugrep}/bin/grep -q "Stopped"; then
+                  ${pkgs.systemd}/bin/systemctl reboot
+                fi
+              done
+    	'';
 in
 {
   system.nixos.label = "vfio";
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
   nix.settings.download-buffer-size = 134217728;
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
-boot.kernelPackages = pkgs.linuxPackages_latest;
-#boot.kernelPackages = pkgs.linuxPackages_6_18;
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+  #boot.kernelPackages = pkgs.linuxPackages_6_18;
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -39,20 +42,24 @@ boot.kernelPackages = pkgs.linuxPackages_latest;
     "rcu_nocbs=2-11"
     "pcie_acs_override=downstream,multifunction" # Probably not needed
     "vfio-pci.ids=1002:7550,1002:ab40" # AMD GPU VGA/AUDIO
-  #  "vfio-pci.disable_idle_d3=1"
+    #  "vfio-pci.disable_idle_d3=1"
   ];
 
   services.udev.extraRules = ''
-  ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x1002", ATTR{device}=="0x7550", ATTR{resource0_resize}="14"
-  ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x1002", ATTR{device}=="0x7550", ATTR{resource2_resize}="8"
-'';
+    ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x1002", ATTR{device}=="0x7550", ATTR{resource0_resize}="14"
+    ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x1002", ATTR{device}=="0x7550", ATTR{resource2_resize}="8"
+  '';
 
   powerManagement.cpuFreqGovernor = "performance";
 
   boot.blacklistedKernelModules = [ "amdgpu" ];
 
-  boot.initrd.kernelModules = [ "vfio_pci" "vfio" "vfio_iommu_type1" ];
- 
+  boot.initrd.kernelModules = [
+    "vfio_pci"
+    "vfio"
+    "vfio_iommu_type1"
+  ];
+
   networking.hostName = "nixos"; # Define your hostname.
 
   # Enable networking
@@ -77,7 +84,7 @@ boot.kernelPackages = pkgs.linuxPackages_latest;
   };
 
   security.allowUserNamespaces = true;
-  
+
   # DONT enable the X11 windowing system.
   services.xserver.enable = false;
   hardware.graphics.enable = false;
@@ -85,17 +92,16 @@ boot.kernelPackages = pkgs.linuxPackages_latest;
   programs.steam.enable = false;
 
   programs.nix-ld = {
-  	enable = true;
-	libraries = pkgs.steam-run.args.multiPkgs pkgs;
-	};
+    enable = true;
+    libraries = pkgs.steam-run.args.multiPkgs pkgs;
+  };
   # Disable Sleep
   systemd.sleep.extraConfig = ''
-  AllowSuspend=no
-  AllowHibernation=no
-  AllowHybridSleep=no
-  AllowSuspendThenHibernate=no
+    AllowSuspend=no
+    AllowHibernation=no
+    AllowHybridSleep=no
+    AllowSuspendThenHibernate=no
   '';
-
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -120,9 +126,15 @@ boot.kernelPackages = pkgs.linuxPackages_latest;
   users.users.luser = {
     isNormalUser = true;
     description = "Local User";
-    extraGroups = [ "networkmanager" "wheel" "kvm" "adbusers" "libvirtd" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "kvm"
+      "adbusers"
+      "libvirtd"
+    ];
     packages = with pkgs; [
-    #  thunderbird
+      #  thunderbird
     ];
   };
 
@@ -136,17 +148,22 @@ boot.kernelPackages = pkgs.linuxPackages_latest;
 
   systemd.services.winvm = {
     description = "Start ${winVmName} with GPU passthrough and reboot host on VM shutdown";
-  
-    after = [ "network.target" "libvirtd.service" "network-online.target" "sshd.service" ];
+
+    after = [
+      "network.target"
+      "libvirtd.service"
+      "network-online.target"
+      "sshd.service"
+    ];
     wants = [ "libvirtd.service" ];
-  
+
     serviceConfig = {
       Type = "simple";
-      Restart = "no";  # We don't auto-restart the service itself
+      Restart = "no"; # We don't auto-restart the service itself
       ExecStart = "${pkgs.libvirt}/bin/virsh start ${winVmName}";
       ExecStop = "${pkgs.libvirt}/bin/virsh shutdown ${winVmName}";
     };
-  
+
     wantedBy = [ "multi-user.target" ];
   };
 
@@ -176,7 +193,7 @@ boot.kernelPackages = pkgs.linuxPackages_latest;
     neofetch
 
     # Virtualization / Containers
-   # spice-gtk
+    # spice-gtk
     pciutils
     usbutils
     dmidecode
@@ -187,7 +204,7 @@ boot.kernelPackages = pkgs.linuxPackages_latest;
     enableCompletion = true;
     autosuggestions.enable = true;
     syntaxHighlighting.enable = true;
-  
+
     shellAliases = {
       ll = "ls -l";
       update = "sudo nixos-rebuild switch";
@@ -195,13 +212,12 @@ boot.kernelPackages = pkgs.linuxPackages_latest;
     histSize = 10000;
   };
 
-  # To add the zsh package to /etc/shells you must update environment.shells. 
+  # To add the zsh package to /etc/shells you must update environment.shells.
   environment.shells = with pkgs; [ zsh ];
-
 
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
-   system.stateVersion = "25.11"; # Did you read the comment?
+  system.stateVersion = "25.11"; # Did you read the comment?
 }

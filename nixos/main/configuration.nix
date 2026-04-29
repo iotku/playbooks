@@ -4,13 +4,16 @@
 { config, pkgs, ... }:
 
 {
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
   nix.settings.download-buffer-size = 134217728;
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      ./wireguard.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    ./wireguard.nix
+  ];
 
   boot.kernelPackages = pkgs.linuxPackages_6_18;
   boot.kernelModules = [
@@ -48,7 +51,7 @@
   };
 
   security.allowUserNamespaces = true;
-  
+
   i18n.inputMethod = {
     enable = true;
     type = "fcitx5";
@@ -77,10 +80,9 @@
   programs.appimage.binfmt = true;
 
   programs.nix-ld = {
-  	enable = true;
-	libraries = pkgs.steam-run.args.multiPkgs pkgs;
-	};
-
+    enable = true;
+    libraries = pkgs.steam-run.args.multiPkgs pkgs;
+  };
 
   # Gnome stuff
   services.displayManager.gdm.enable = true;
@@ -94,7 +96,7 @@
 
   # They see me scrollin' they hatin'
   #programs.niri.enable = true;
- 
+
   # Enable plasma6
   #services.displayManager.sddm.enable = true;
   #services.displayManager.sddm.wayland.enable = true;
@@ -114,7 +116,7 @@
     source-han-serif
     source-han-code-jp
     # Good TTF font for supersonic/Japanse fallback
-    mplus-outline-fonts.githubRelease 
+    mplus-outline-fonts.githubRelease
     #/run/current-system/sw/share/X11/fonts/Mplus2-Black.ttf
     #/run/current-system/sw/share/X11/fonts/Mplus2-Regular.ttf
   ];
@@ -127,13 +129,13 @@
 
       # Color emojis
       useEmbeddedBitmaps = true;
-  
+
       # Fixes antialiasing blur
       hinting = {
         enable = true;
         style = "slight";
       };
-  
+
       subpixel = {
         # Makes it bolder
         rgba = "rgb";
@@ -141,9 +143,18 @@
       };
 
       defaultFonts = {
-        sansSerif = [ "Calibri" "Noto Sans" ];
-        serif = [ "Cambria" "Noto Serif" ];
-        monospace = [ "JetBrainsMono Nerd Font Mono" "Source Han Mono" ];
+        sansSerif = [
+          "Calibri"
+          "Noto Sans"
+        ];
+        serif = [
+          "Cambria"
+          "Noto Serif"
+        ];
+        monospace = [
+          "JetBrainsMono Nerd Font Mono"
+          "Source Han Mono"
+        ];
         emoji = [ "Noto Color Emoji" ];
       };
     };
@@ -183,9 +194,15 @@
   users.users.luser = {
     isNormalUser = true;
     description = "Local User";
-    extraGroups = [ "networkmanager" "wheel" "kvm" "adbusers" "libvirtd" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "kvm"
+      "adbusers"
+      "libvirtd"
+    ];
     packages = with pkgs; [
-    #  thunderbird
+      #  thunderbird
     ];
   };
 
@@ -212,27 +229,27 @@
   };
 
   services.flatpak.packages = [
-      "org.deskflow.deskflow" # KB/Mouse Sharing
-      "com.github.tchx84.Flatseal" # Flatpak sandbox configuration
-      # Browser / Email
-      "org.mozilla.firefox" # xdg-settings set default-web-browser org.mozilla.firefox.desktop
-      "org.mozilla.Thunderbird"
-      "com.logseq.Logseq"
-      "com.sublimemerge.App"
-      "net.ankiweb.Anki"
-      # Communication Platforms
-      "org.telegram.desktop"
-      "com.discordapp.Discord"
-      "us.zoom.Zoom"
-      "info.mumble.Mumble"
-      # Compatibility
-      "com.usebottles.bottles"
-      "io.podman_desktop.PodmanDesktop"
-      "it.mijorus.gearlever" # GTK Manage Appimages
-      # Media
-      "com.calibre_ebook.calibre"
-      "com.yacreader.YACReader"
-      "com.obsproject.Studio"
+    "org.deskflow.deskflow" # KB/Mouse Sharing
+    "com.github.tchx84.Flatseal" # Flatpak sandbox configuration
+    # Browser / Email
+    "org.mozilla.firefox" # xdg-settings set default-web-browser org.mozilla.firefox.desktop
+    "org.mozilla.Thunderbird"
+    "com.logseq.Logseq"
+    "com.sublimemerge.App"
+    "net.ankiweb.Anki"
+    # Communication Platforms
+    "org.telegram.desktop"
+    "com.discordapp.Discord"
+    "us.zoom.Zoom"
+    "info.mumble.Mumble"
+    # Compatibility
+    "com.usebottles.bottles"
+    "io.podman_desktop.PodmanDesktop"
+    "it.mijorus.gearlever" # GTK Manage Appimages
+    # Media
+    "com.calibre_ebook.calibre"
+    "com.yacreader.YACReader"
+    "com.obsproject.Studio"
   ];
 
   # Podman containers
@@ -263,7 +280,7 @@
     bitwarden-desktop
     ghostty
     wireguard-tools
- 
+
     # for niri
     #alacritty
     #fuzzel
@@ -299,7 +316,7 @@
 
     # Hardware specific
     solaar # Logitech Mice
-    #nvtopPackages.nvidia 
+    #nvtopPackages.nvidia
 
     # non-free
     reaper
@@ -322,6 +339,7 @@
     nodejs
     powershell # why not
     antimicrox
+    nixfmt
 
     # Language Servers
     nil
@@ -333,7 +351,7 @@
     enableCompletion = true;
     autosuggestions.enable = true;
     syntaxHighlighting.enable = true;
-  
+
     shellAliases = {
       ll = "ls -l";
       update = "sudo nixos-rebuild switch";
@@ -341,9 +359,8 @@
     histSize = 10000;
   };
 
-  # To add the zsh package to /etc/shells you must update environment.shells. 
+  # To add the zsh package to /etc/shells you must update environment.shells.
   environment.shells = with pkgs; [ zsh ];
-
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -361,11 +378,17 @@
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 24800 ]; # open port for deskflow server
   # Firewall ports for KDEConnect/GSconnect
-  networking.firewall.allowedTCPPortRanges = [ 
-  	{ from = 1716; to = 1764; } 
+  networking.firewall.allowedTCPPortRanges = [
+    {
+      from = 1716;
+      to = 1764;
+    }
   ];
-  networking.firewall.allowedUDPPortRanges = [ 
-  	{ from = 1716; to = 1764; } 
+  networking.firewall.allowedUDPPortRanges = [
+    {
+      from = 1716;
+      to = 1764;
+    }
   ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
