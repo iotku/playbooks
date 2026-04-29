@@ -18,12 +18,7 @@
         system = system;
         config.allowUnfree = true;
       };
-    in {
-      nixosConfigurations = {
-        nixos = nixpkgs.lib.nixosSystem {
-          inherit system;
-
-          modules = [
+      commonModules = [
             nix-flatpak.nixosModules.nix-flatpak
             ./configuration.nix
             home-manager.nixosModules.home-manager
@@ -36,20 +31,30 @@
                     readest = unstablePkgs.readest;
                     zed-editor = unstablePkgs.zed-editor;
                     reaper = unstablePkgs.reaper;
-          	  vscode = unstablePkgs.vscode;
-          	  slack = unstablePkgs.slack;
+          	    vscode = unstablePkgs.vscode;
                   })
                 ];
                 config.allowUnfree = true;
               };
             }
           ];
-        };
+
+    in {
+      nixosConfigurations = {
+        blackbox = nixpkgs.lib.nixosSystem {
+          inherit system;
+	  modules = commonModules ++ [ ./config-blackbox.nix ];
+         };
+
+        silversurfer = nixpkgs.lib.nixosSystem {
+          inherit system;
+	  modules = commonModules ++ [ ./config-silversurfer.nix ];
+         };
 
  	vfio = nixpkgs.lib.nixosSystem {
 	  inherit system;
 	  modules = [
-	    ./vfio-config.nix
+	    ./config-vfio.nix
 	  ];
 	};
       };

@@ -24,12 +24,7 @@
   boot.supportedFilesystems = [ "ntfs" ];
   services.udisks2.enable = true;
 
-  networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Enable networking
   networking.networkmanager.enable = true;
@@ -67,7 +62,6 @@
 
   environment.variables = {
     ELECTRON_OZONE_PLATFORM_HINT = "wayland";
- #   JAVA_TOOL_OPTIONS = "-Dsun.java2d.uiScale=2.0"; # Fractional scaling support when?
   };
 
   # Enable the X11 windowing system.
@@ -79,31 +73,14 @@
   };
 
   programs.steam.enable = false;
+  programs.appimage.enable = true;
+  programs.appimage.binfmt = true;
 
   programs.nix-ld = {
   	enable = true;
 	libraries = pkgs.steam-run.args.multiPkgs pkgs;
 	};
-  # Copy monitor configurationg from `luser`, ideally we would use a varible for the user.
-  systemd.services.copyGdmMonitorsXml = {
-    description = "Copy monitors.xml to GDM config";
-    after = [ "network.target" "systemd-user-sessions.service" "display-manager.service" ];
-    
-    serviceConfig = {
-      ExecStart = "${pkgs.bash}/bin/bash -c 'mkdir -p /run/gdm/.config && [ \"/home/luser/.config/monitors.xml\" -ef \"/run/gdm/.config/monitors.xml\" ] || cp /home/luser/.config/monitors.xml /run/gdm/.config/monitors.xml && chown gdm:gdm /run/gdm/.config/monitors.xml'";
-      Type = "oneshot";
-    };
-    
-    wantedBy = [ "multi-user.target" ];
-  };
 
-  # Disable Sleep
-  systemd.sleep.extraConfig = ''
-  AllowSuspend=no
-  AllowHibernation=no
-  AllowHybridSleep=no
-  AllowSuspendThenHibernate=no
-  '';
 
   # Gnome stuff
   services.displayManager.gdm.enable = true;
@@ -116,12 +93,13 @@
   '';
 
   # They see me scrollin' they hatin'
-  programs.niri.enable = true;
+  #programs.niri.enable = true;
  
   # Enable plasma6
   #services.displayManager.sddm.enable = true;
   #services.displayManager.sddm.wayland.enable = true;
   #services.desktopManager.plasma6.enable = true;
+
   fonts.fontDir.enable = true;
   fonts.enableDefaultPackages = true;
   fonts.packages = with pkgs; [
@@ -195,42 +173,6 @@
     pulse.enable = true;
     jack.enable = true;
     wireplumber.enable = true;
-
-    wireplumber.configPackages = [
-          (pkgs.writeTextDir "share/wireplumber/wireplumber.conf.d/alsa.conf" ''
-            monitor.alsa.rules = [
-              {
-                matches = [
-                  {
-                    device.name = "~alsa_card.*"
-                  }
-                ]
-                actions = {
-                  update-props = {
-                    # Device settings
-                    api.alsa.use-acp = true
-                  }
-                }
-              }
-              {
-                matches = [
-                  {
-                    node.name = "~alsa_input..*"
-                  }
-                  {
-                    node.name = "~alsa_output.*"
-                  }
-                ]
-                actions = {
-                # Node settings
-                  update-props = {
-                    session.suspend-timeout-seconds = 0
-                  }
-                }
-              }
-            ]
-          '')
-        ];
   };
 
   # Enable touchpad support (enabled default in most desktopManager).
@@ -286,7 +228,7 @@
       # Compatibility
       "com.usebottles.bottles"
       "io.podman_desktop.PodmanDesktop"
-   #   "it.mijorus.gearlever" # GTK Manage Appimages
+      "it.mijorus.gearlever" # GTK Manage Appimages
       # Media
       "com.calibre_ebook.calibre"
       "com.yacreader.YACReader"
@@ -310,6 +252,7 @@
     tmux
     fzf
     nnn
+    lm_sensors
     git
     git-lfs
     unzip
@@ -322,10 +265,10 @@
     wireguard-tools
  
     # for niri
-    alacritty
-    fuzzel
-    swaylock
-    waybar
+    #alacritty
+    #fuzzel
+    #swaylock
+    #waybar
 
     # Multimedia
     supersonic
@@ -350,6 +293,7 @@
 
     # Virtualization / Containers
     podman-compose
+    guestfs-tools
     spice-gtk
     pciutils
 
@@ -365,7 +309,6 @@
     readest
     zed-editor
     vscode
-    slack
     # Programming Languages
     jetbrains-toolbox
     gcc
