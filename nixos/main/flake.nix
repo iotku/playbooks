@@ -2,7 +2,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.6.0";
+    nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.7.0";
 
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
@@ -27,6 +27,7 @@
         config.allowUnfree = true;
       };
       commonModules = [
+	./gnome.nix
         nix-flatpak.nixosModules.nix-flatpak
         ./configuration.nix
         home-manager.nixosModules.home-manager

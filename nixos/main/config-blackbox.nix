@@ -1,13 +1,24 @@
 { config, pkgs, ... }:
 {
   networking.hostName = "blackbox"; # Define your hostname.
-  # Disable Sleep
-  #  systemd.sleep.extraConfig = ''
-  #  AllowSuspend=no
-  #  AllowHibernation=no
-  #  AllowHybridSleep=no
-  #  AllowSuspendThenHibernate=no
-  #  '';
+  # Open ports in the firewall.
+  networking.firewall.allowedTCPPorts = [ 24800 ]; # open port for deskflow server
+  # Firewall ports for KDEConnect/GSconnect
+  networking.firewall.allowedTCPPortRanges = [
+    {
+      from = 1716;
+      to = 1764;
+    }
+  ];
+  networking.firewall.allowedUDPPortRanges = [
+    {
+      from = 1716;
+      to = 1764;
+    }
+  ];
+  # networking.firewall.allowedUDPPorts = [ ... ];
+  # Or disable the firewall altogether.
+  # networking.firewall.enable = false;
 
   services.pipewire.wireplumber.configPackages = [
     (pkgs.writeTextDir "share/wireplumber/wireplumber.conf.d/alsa.conf" ''
@@ -60,4 +71,14 @@
 
     wantedBy = [ "multi-user.target" ];
   };
+
+  # Disable Sleep
+  #  systemd.sleep.extraConfig = ''
+  #  AllowSuspend=no
+  #  AllowHibernation=no
+  #  AllowHybridSleep=no
+  #  AllowSuspendThenHibernate=no
+  #  '';
+
+
 }
