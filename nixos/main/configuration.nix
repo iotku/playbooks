@@ -18,7 +18,7 @@
   #boot.kernelPackages = pkgs.linuxPackages_6_18;
 
   boot.kernelParams = [
-    "mitigations=off" # Super insecure! Nice!
+ #   "mitigations=off" # Super insecure! Nice!
    ];
   boot.kernelModules = [
     "v4l2loopback"
@@ -267,6 +267,7 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     xfsprogs
+    osu-lazer-bin
     wget
     neovim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     tmux
