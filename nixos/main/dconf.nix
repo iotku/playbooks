@@ -9,6 +9,17 @@ with lib.hm.gvariant;
       screen-reader-enabled = false;
     };
 
+    "org/gnome/desktop/session" = {
+      idle-delay = lib.hm.gvariant.mkUint32 7200;
+    };
+
+    "org/gnome/desktop/privacy" = {
+       recent-files-max-age = 7;
+       remove-old-trash-files = true;
+       remove-old-temp-files = true;
+       old-files-age = lib.hm.gvariant.mkUint32 3;
+    };
+
     "org/gnome/desktop/background" = {
       color-shading-type = "solid";
       picture-options = "zoom";
