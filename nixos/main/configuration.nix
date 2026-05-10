@@ -14,7 +14,12 @@
     ./wireguard.nix
   ];
 
-  boot.kernelPackages = pkgs.linuxPackages_6_18;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+  #boot.kernelPackages = pkgs.linuxPackages_6_18;
+
+  boot.kernelParams = [
+    "mitigations=off" # Super insecure! Nice!
+   ];
   boot.kernelModules = [
     "v4l2loopback"
   ];
@@ -74,7 +79,7 @@
     enable = true;
   };
 
-  programs.steam.enable = false;
+  programs.steam.enable = true;
   programs.appimage.enable = true;
   programs.appimage.binfmt = true;
 
@@ -87,9 +92,9 @@
   #programs.niri.enable = true;
 
   # Enable plasma6
-  #services.displayManager.sddm.enable = true;
-  #services.displayManager.sddm.wayland.enable = true;
-  #services.desktopManager.plasma6.enable = true;
+  services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.wayland.enable = true;
+  services.desktopManager.plasma6.enable = true;
 
   fonts.fontDir.enable = true;
   fonts.enableDefaultPackages = true;
@@ -224,6 +229,7 @@
     "org.mozilla.firefox" # xdg-settings set default-web-browser org.mozilla.firefox.desktop
     "org.mozilla.Thunderbird"
     "com.logseq.Logseq"
+    "md.obsidian.Obsidian"
     "com.sublimemerge.App"
     "net.ankiweb.Anki"
     # Communication Platforms
@@ -239,6 +245,13 @@
     "com.calibre_ebook.calibre"
     "com.yacreader.YACReader"
     "com.obsproject.Studio"
+    # Gamering
+    "com.heroicgameslauncher.hgl"
+    "net.pcsx2.PCSX2"
+    "net.rpcs3.RPCS3"
+    "net.shadps4.shadPS4"
+    "org.ppsspp.PPSSPP"
+
   ];
 
   # Podman containers
@@ -253,6 +266,7 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    xfsprogs
     wget
     neovim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     tmux
@@ -269,6 +283,8 @@
     bitwarden-desktop
     ghostty
     wireguard-tools
+    ncdu
+
 
     # for niri
     #alacritty
@@ -279,9 +295,16 @@
     # Multimedia
     supersonic
     mpv
+    svp
     jellyfin-mpv-shim
     yt-dlp
     streamlink
+    transmission-remote-gtk
+    inkscape-with-extensions
+    gimp
+    krita
+    libreoffice-fresh
+    localsend
 
     # Communication
     signal-desktop
@@ -295,6 +318,14 @@
     # Hardware specific
     solaar # Logitech Mice
     #nvtopPackages.nvidia
+    sdparm
+    
+
+    # h4x
+    imhex
+    sqlitebrowser
+    wireshark-qt
+    insomnia
 
     # non-free
     reaper
@@ -304,6 +335,8 @@
     readest
     zed-editor
     vscode
+
+    ladybird
     # Programming Languages
     jetbrains-toolbox
     gcc
