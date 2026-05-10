@@ -1,6 +1,12 @@
 { config, pkgs, ... }:
 {
+
+  imports = [
+    ./containers/securebox.nix
+  ];
   networking.hostName = "blackbox"; # Define your hostname.
+  powerManagement.cpuFreqGovernor = "performance";
+
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 24800 ]; # open port for deskflow server
   # Firewall ports for KDEConnect/GSconnect
