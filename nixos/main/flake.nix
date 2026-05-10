@@ -3,6 +3,10 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.7.0";
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
@@ -16,6 +20,7 @@
       nixpkgs,
       unstable,
       nix-flatpak,
+      sops-nix,
       home-manager,
       ...
     }:
@@ -27,7 +32,16 @@
         config.allowUnfree = true;
       };
       commonModules = [
-	./gnome.nix
+        #./gnome.nix
+        sops-nix.nixosModules.sops
+        {
+          sops.defaultSopsFile = ./secrets/secrets.yaml;
+          sops.defaultSopsFormat = "yaml";
+          sops.age.keyFile = "/home/luser/.config/sops/age/keys.txt";
+          sops.secrets."wireguard_yeet/privkey" = { };
+          sops.secrets."wireguard_yeet/pubkey" = { };
+          sops.secrets."wireguard_yeet/endpoint" = { };
+        }
         nix-flatpak.nixosModules.nix-flatpak
         ./configuration.nix
         home-manager.nixosModules.home-manager
