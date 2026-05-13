@@ -12,6 +12,12 @@
       url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v1.0.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
@@ -22,6 +28,7 @@
       nix-flatpak,
       sops-nix,
       home-manager,
+      lanzaboote,
       ...
     }:
     let
@@ -31,8 +38,12 @@
         system = system;
         config.allowUnfree = true;
       };
-      commonModules = [
-        #./gnome.nix
+
+      secureboot = [
+         lanzaboote.nixosModules.lanzaboote
+      ];
+
+      sopsModules = [
         sops-nix.nixosModules.sops
         {
           sops.defaultSopsFile = ./secrets/secrets.yaml;
@@ -42,6 +53,10 @@
           sops.secrets."wireguard_yeet/pubkey" = { };
           sops.secrets."wireguard_yeet/endpoint" = { };
         }
+      ];
+
+      commonModules = [
+        #./gnome.nix
         nix-flatpak.nixosModules.nix-flatpak
         ./configuration.nix
         home-manager.nixosModules.home-manager
@@ -67,12 +82,12 @@
       nixosConfigurations = {
         blackbox = nixpkgs.lib.nixosSystem {
           inherit system;
-          modules = commonModules ++ [ ./config-blackbox.nix ];
+          modules = sopsModules ++ commonModules ++ [ ./config-blackbox.nix ];
         };
 
         silversurfer = nixpkgs.lib.nixosSystem {
           inherit system;
-          modules = commonModules ++ [ ./config-silversurfer.nix ];
+          modules = secureboot ++ commonModules ++ [ ./config-silversurfer.nix ];
         };
 
         vfio = nixpkgs.lib.nixosSystem {
