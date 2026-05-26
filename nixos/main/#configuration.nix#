@@ -13,14 +13,12 @@
     ./hardware-configuration.nix
     ./wireguard.nix
   ];
-  services.udev.packages = [ pkgs.yubikey-personalization ];
-  boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
-  #boot.kernelPackages = pkgs.linuxPackages_latest;
+
+  boot.kernelPackages = pkgs.linuxPackages_latest;
   #boot.kernelPackages = pkgs.linuxPackages_6_18;
 
   boot.kernelParams = [
  #   "mitigations=off" # Super insecure! Nice!
-    "mitigations=auto,nosmt"
    ];
   boot.kernelModules = [
     "v4l2loopback"
@@ -93,6 +91,11 @@
   # They see me scrollin' they hatin'
   #programs.niri.enable = true;
 
+  # Enable plasma6
+  services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.wayland.enable = true;
+  services.desktopManager.plasma6.enable = true;
+
   fonts.fontDir.enable = true;
   fonts.enableDefaultPackages = true;
   fonts.packages = with pkgs; [
@@ -101,7 +104,6 @@
     nerd-fonts.profont
     noto-fonts-color-emoji
     vista-fonts
-    source-code-pro
     # CJK Fonts
     source-han-sans
     source-han-mono
@@ -259,15 +261,15 @@
   };
 
   programs.java.enable = true;
+  programs.adb.enable = true;
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     xfsprogs
-    sbctl
     osu-lazer-bin
     wget
     neovim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    emacs 
     tmux
     fzf
     nnn
@@ -304,14 +306,13 @@
     krita
     libreoffice-fresh
     localsend
-    furnace
 
     # Communication
     signal-desktop
 
     # Virtualization / Containers
     podman-compose
-    #guestfs-tools
+    guestfs-tools
     spice-gtk
     pciutils
 
@@ -324,9 +325,8 @@
     # h4x
     imhex
     sqlitebrowser
-    wireshark
+    wireshark-qt
     insomnia
-    android-tools
 
     # non-free
     reaper
@@ -337,6 +337,7 @@
     zed-editor
     vscode
 
+    ladybird
     # Programming Languages
     jetbrains-toolbox
     gcc

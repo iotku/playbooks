@@ -76,7 +76,27 @@
         systemd.services.systemd-networkd-wait-online = {
           enable = lib.mkForce false;
         };
-        
+
+
+        # hack to get host connection working
+        systemd.network.networks."40-eth0" = {
+          matchConfig.Name = "eth0";
+          networkConfig = {
+            Address = "10.250.0.2/32";
+            DHCP = "no";
+            IPv6PrivacyExtensions = "kernel";
+          };
+          routes = [
+            {
+              Gateway = "10.250.0.1";
+              GatewayOnLink = true;
+            }
+            {
+              Destination = "10.250.0.1";
+              Scope = "link";
+            }
+          ];
+        };
         systemd.services.generate-wg0 = {
           description = "Generate wg0.conf from mounted secrets";
 
@@ -163,37 +183,40 @@
         # KILL SWITCH (critical)
         # -----------------------------
         networking.firewall.extraCommands = ''
-                    # Allow loopback
-                    iptables -A OUTPUT -o lo -j ACCEPT
+                                        # Allow loopback
+                                        iptables -A OUTPUT -o lo -j ACCEPT
+          			      # Allow traffic to/from host veth address (for SSH and management)
+            iptables -I OUTPUT 1 -d 10.250.0.1 -j ACCEPT
+            iptables -I INPUT 1 -s 10.250.0.1 -j ACCEPT
 
-		    # Allow connection to server (we do this through a systemd service now...)
-                    # iptables -A OUTPUT -d $WG_HOST -p udp --dport $WG_HOST_PORT -j ACCEPT
+                    		    # Allow connection to server (we do this through a systemd service now...)
+                                        # iptables -A OUTPUT -d $WG_HOST -p udp --dport $WG_HOST_PORT -j ACCEPT
 
-                    # Allow established connections
-                    iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+                                        # Allow established connections
+                                        iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
-                    # Allow traffic over WireGuard interface
-                    iptables -A OUTPUT -o wg0 -j ACCEPT
+                                        # Allow traffic over WireGuard interface
+                                        iptables -A OUTPUT -o wg0 -j ACCEPT
 
-                    # Drop everything else (kill switch)
-                    iptables -A OUTPUT -j DROP
+                                        # Drop everything else (kill switch)
+                                        iptables -A OUTPUT -j DROP
 
-          	  
-            # -----------------------------
-            # FORWARD (IMPORTANT FOR VPN/NAT)
-            # -----------------------------
+                              	  
+                                # -----------------------------
+                                # FORWARD (IMPORTANT FOR VPN/NAT)
+                                # -----------------------------
 
-            # allow return traffic
-            iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+                                # allow return traffic
+                                iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
-            # allow traffic from VPN to WAN (typical NAT route)
-            iptables -A FORWARD -i wg0 -o eth0 -j ACCEPT
+                                # allow traffic from VPN to WAN (typical NAT route)
+                                iptables -A FORWARD -i wg0 -o eth0 -j ACCEPT
 
-            # (optional) allow LAN/WAN responses back in reverse direction
-            iptables -A FORWARD -i eth0 -o wg0 -j ACCEPT
-            
-            iptables -A INPUT -p tcp --dport 51427 -j ACCEPT
-            iptables -A INPUT -p udp --dport 51427 -j ACCEPT
+                                # (optional) allow LAN/WAN responses back in reverse direction
+                                iptables -A FORWARD -i eth0 -o wg0 -j ACCEPT
+                                
+                                iptables -A INPUT -p tcp --dport 51427 -j ACCEPT
+                                iptables -A INPUT -p udp --dport 51427 -j ACCEPT
         '';
 
         # -----------------------------
@@ -201,6 +224,7 @@
         # -----------------------------
         environment.systemPackages = with pkgs; [
           curl
+          rsstail
           wireguard-tools
           iproute2
           speedtest-cli
@@ -219,6 +243,7 @@
             # Override default settings
             download-dir = "/data/torrents";
             incomplete-dir = "/data/incomplete";
+            watch-dir-enabled = true;
             rpc-bind-address = "10.250.0.2"; # Bind to own IP
             rpc-whitelist = "127.0.0.1,10.250.0.1"; # Whitelist your remote machine (10.0.0.1 in this example)
             peer-port = 51427; # Be sure to forward on wg!
@@ -236,6 +261,21 @@
             PrivateNetwork = lib.mkForce false;
             RootDirectory = lib.mkForce "";
           };
+        };
+
+        systemd.services.fix-watchdir-perms = {
+          description = "Fix transmission watchdir permissions";
+
+          before = [ "transmission.service" ];
+          wantedBy = [ "multi-user.target" ];
+
+          serviceConfig = {
+            Type = "oneshot";
+          };
+
+          script = ''
+            chmod 2775 /data/transmission/watchdir
+          '';
         };
 
       };

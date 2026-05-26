@@ -1,7 +1,10 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    #nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    small.url = "github:NixOS/nixpkgs/nixos-26.05-small";
+
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.7.0";
     sops-nix = {
       url = "github:Mic92/sops-nix";
@@ -9,7 +12,9 @@
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
+      #url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/release-26.05";
+      #url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -25,6 +30,7 @@
       self,
       nixpkgs,
       unstable,
+      small,
       nix-flatpak,
       sops-nix,
       home-manager,
@@ -38,9 +44,22 @@
         system = system;
         config.allowUnfree = true;
       };
+      
+      smallPkgs = import small {
+        system = system;
+        config.allowUnfree = true;
+      };
 
       secureboot = [
-         lanzaboote.nixosModules.lanzaboote
+        lanzaboote.nixosModules.lanzaboote
+	{
+	    boot.loader.systemd-boot.enable = nixpkgs.lib.mkForce false;
+
+            boot.lanzaboote = {
+              enable = true;
+              pkiBundle = "/var/lib/sbctl";
+            };
+	}
       ];
 
       sopsModules = [
@@ -55,8 +74,10 @@
         }
       ];
 
+      gnome = [ ./gnome.nix ];
+      plasma = [ ./plasma.nix ];
+
       commonModules = [
-        #./gnome.nix
         nix-flatpak.nixosModules.nix-flatpak
         ./configuration.nix
         home-manager.nixosModules.home-manager
@@ -70,6 +91,8 @@
                 zed-editor = unstablePkgs.zed-editor;
                 reaper = unstablePkgs.reaper;
                 vscode = unstablePkgs.vscode;
+		osu-lazer-bin = smallPkgs.osu-lazer-bin;
+		neovim = unstablePkgs.neovim;
               })
             ];
             config.allowUnfree = true;
@@ -82,7 +105,7 @@
       nixosConfigurations = {
         blackbox = nixpkgs.lib.nixosSystem {
           inherit system;
-          modules = sopsModules ++ commonModules ++ [ ./config-blackbox.nix ];
+          modules = plasma ++ secureboot ++ sopsModules ++ commonModules ++ [ ./config-blackbox.nix ];
         };
 
         silversurfer = nixpkgs.lib.nixosSystem {
