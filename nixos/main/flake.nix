@@ -17,6 +17,12 @@
       #url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    
+    plasma-manager = {
+      url = "github:nix-community/plasma-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
 
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v1.0.0";
@@ -34,6 +40,7 @@
       nix-flatpak,
       sops-nix,
       home-manager,
+      plasma-manager,
       lanzaboote,
       ...
     }:
@@ -110,12 +117,12 @@
 
         silversurfer = nixpkgs.lib.nixosSystem {
           inherit system;
-          modules = secureboot ++ commonModules ++ [ ./config-silversurfer.nix ];
+          modules = gnome ++ secureboot ++ commonModules ++ [ ./config-silversurfer.nix ];
         };
 
         vfio = nixpkgs.lib.nixosSystem {
           inherit system;
-          modules = [
+          modules = secureboot ++ [
             ./config-vfio.nix
           ];
         };

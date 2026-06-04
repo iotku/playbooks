@@ -9,23 +9,7 @@
 
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 24800 ]; # open port for deskflow server
-  # Firewall ports for KDEConnect/GSconnect
-  networking.firewall.allowedTCPPortRanges = [
-    {
-      from = 1716;
-      to = 1764;
-    }
-  ];
-  networking.firewall.allowedUDPPortRanges = [
-    {
-      from = 1716;
-      to = 1764;
-    }
-  ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
+  programs.kdeconnect.enable = true; # Note that it will open the TCP and UDP port from 1714 to 1764 
   services.pipewire.wireplumber.configPackages = [
     (pkgs.writeTextDir "share/wireplumber/wireplumber.conf.d/alsa.conf" ''
       monitor.alsa.rules = [
@@ -61,14 +45,4 @@
       ]
     '')
   ];
-
-  # Disable Sleep
-  #  systemd.sleep.extraConfig = ''
-  #  AllowSuspend=no
-  #  AllowHibernation=no
-  #  AllowHybridSleep=no
-  #  AllowSuspendThenHibernate=no
-  #  '';
-
-
 }

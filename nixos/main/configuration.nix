@@ -3,25 +3,74 @@
 { config, pkgs, ... }:
 
 {
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
-  nix.settings.download-buffer-size = 134217728;
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./wireguard.nix
   ];
+
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
+
+  nix.settings.download-buffer-size = 134217728;
+
+  nix.settings.auto-optimise-store = true; # Optimize every build
+  nix.gc = {
+    automatic = true;
+    dates = "weekly"; # Runs once a week; can also be "daily" or a specific time like "03:15"
+    options = "--delete-older-than 14d"; # Deletes packages and profiles older than 30 days
+  };
+
+  system.autoUpgrade = {
+    enable = true;
+    operation = "boot";
+    flags = [ "--print-build-logs" ];
+    flake = "path:///etc/nixos";
+  };
+
+  # https://discourse.nixos.org/t/how-to-automatically-update-flakes/72426/8
+  systemd.services.nixos-upgrade = {
+    after = [ "flake-update.service" ];
+    requires = [ "flake-update.service" ];
+  };
+
+  systemd.services = {
+    flake-update = {
+      description = "Update flake inputs";
+      unitConfig = {
+        StartLimitIntervalSec = 300;
+        StartLimitBurst = 5;
+      };
+      serviceConfig = {
+        WorkingDirectory = "/etc/nixos";
+        ExecStartPre = "${pkgs.networkmanager}/bin/nm-online";
+        ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.git}/bin/git add .;${pkgs.git}/bin/git commit -m 'autoupdate';${pkgs.nix}/bin/nix flake update'";
+        Restart = "on-failure";
+        RestartSec = "30";
+        Type = "oneshot";
+        User = "root";
+      };
+      path = [
+        pkgs.nix
+        pkgs.git
+        pkgs.host
+        pkgs.networkmanager
+      ];
+    };
+  };
+
   services.udev.packages = [ pkgs.yubikey-personalization ];
-  boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
+  #boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
+  boot.kernelPackages = pkgs.linuxPackages;
   #boot.kernelPackages = pkgs.linuxPackages_latest;
   #boot.kernelPackages = pkgs.linuxPackages_6_18;
 
   boot.kernelParams = [
- #   "mitigations=off" # Super insecure! Nice!
+    #   "mitigations=off" # Super insecure! Nice!
     "mitigations=auto,nosmt"
-   ];
+  ];
   boot.kernelModules = [
     "v4l2loopback"
   ];
@@ -82,6 +131,8 @@
   };
 
   programs.steam.enable = true;
+  programs.gamescope.enable = true;
+  programs.gamemode.enable = true;
   programs.appimage.enable = true;
   programs.appimage.binfmt = true;
 
@@ -223,6 +274,7 @@
   services.flatpak.packages = [
     "org.deskflow.deskflow" # KB/Mouse Sharing
     "com.github.tchx84.Flatseal" # Flatpak sandbox configuration
+    "com.bitwarden.desktop"
     # Browser / Email
     "org.mozilla.firefox" # xdg-settings set default-web-browser org.mozilla.firefox.desktop
     "org.mozilla.Thunderbird"
@@ -259,6 +311,7 @@
   };
 
   programs.java.enable = true;
+  programs.java.package = pkgs.temurin-bin; # Includes docs
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -267,11 +320,14 @@
     osu-lazer-bin
     wget
     neovim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    emacs 
+    emacs
     tmux
     fzf
     nnn
+
     lm_sensors
+    hddtemp
+
     git
     git-lfs
     unzip
@@ -279,11 +335,9 @@
     rclone
     lftp
     distrobox
-    bitwarden-desktop
     ghostty
     wireguard-tools
     ncdu
-
 
     # for niri
     #alacritty
@@ -305,6 +359,7 @@
     libreoffice-fresh
     localsend
     furnace
+    unrar
 
     # Communication
     signal-desktop
@@ -319,7 +374,6 @@
     solaar # Logitech Mice
     #nvtopPackages.nvidia
     sdparm
-    
 
     # h4x
     imhex
@@ -346,6 +400,7 @@
     python3
     zig
     rustup
+
     clang-tools
     nodejs
     powershell # why not
@@ -355,6 +410,9 @@
     # Language Servers
     nil
     nixd
+    rust-analyzer
+
+    prismlauncher
   ];
 
   programs.zsh = {
@@ -377,7 +435,7 @@
 
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
-  
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave

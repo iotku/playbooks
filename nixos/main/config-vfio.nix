@@ -95,13 +95,6 @@ in
     enable = true;
     libraries = pkgs.steam-run.args.multiPkgs pkgs;
   };
-  # Disable Sleep
-  systemd.sleep.extraConfig = ''
-    AllowSuspend=no
-    AllowHibernation=no
-    AllowHybridSleep=no
-    AllowSuspendThenHibernate=no
-  '';
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -190,7 +183,7 @@ in
     wget
     tmux
     neovim
-    neofetch
+    fastfetch
 
     # Virtualization / Containers
     # spice-gtk
