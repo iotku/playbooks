@@ -15,20 +15,7 @@
   ];
 
   nix.settings.download-buffer-size = 134217728;
-
   nix.settings.auto-optimise-store = true; # Optimize every build
-  nix.gc = {
-    automatic = true;
-    dates = "weekly"; # Runs once a week; can also be "daily" or a specific time like "03:15"
-    options = "--delete-older-than 14d"; # Deletes packages and profiles older than 30 days
-  };
-
-  system.autoUpgrade = {
-    enable = true;
-    operation = "boot";
-    flags = [ "--print-build-logs" ];
-    flake = "path:///etc/nixos";
-  };
 
   # https://discourse.nixos.org/t/how-to-automatically-update-flakes/72426/8
   systemd.services.nixos-upgrade = {

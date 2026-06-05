@@ -6,6 +6,18 @@
   ];
   networking.hostName = "blackbox"; # Define your hostname.
   powerManagement.cpuFreqGovernor = "performance";
+  nix.gc = {
+    automatic = true;
+    dates = "weekly"; # Runs once a week; can also be "daily" or a specific time like "03:15"
+    options = "--delete-older-than 14d"; # Deletes packages and profiles older than 30 days
+  };
+
+  system.autoUpgrade = {
+    enable = true;
+    operation = "boot";
+    flags = [ "--print-build-logs" ];
+    flake = "path:///etc/nixos";
+  };
 
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 24800 ]; # open port for deskflow server
