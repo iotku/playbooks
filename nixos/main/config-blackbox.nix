@@ -18,10 +18,18 @@
     flags = [ "--print-build-logs" ];
     flake = "path:///etc/nixos";
   };
+  systemd.sleep.settings = {
+    Sleep = {
+      AllowHibernation = "no";
+      AllowHybridSleep = "no";
+      AllowSuspend = "no";
+      AllowSuspendThenHibernate = "no";
+    };
+  };
 
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 24800 ]; # open port for deskflow server
-  programs.kdeconnect.enable = true; # Note that it will open the TCP and UDP port from 1714 to 1764 
+  programs.kdeconnect.enable = true; # Note that it will open the TCP and UDP port from 1714 to 1764
   services.pipewire.wireplumber.configPackages = [
     (pkgs.writeTextDir "share/wireplumber/wireplumber.conf.d/alsa.conf" ''
       monitor.alsa.rules = [
