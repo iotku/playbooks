@@ -17,6 +17,33 @@
   nix.settings.download-buffer-size = 134217728;
   nix.settings.auto-optimise-store = true; # Optimize every build
 
+  hardware.opentabletdriver.enable = true;
+  hardware.opentabletdriver.daemon.enable = true;
+
+  # Required by OpenTabletDriver
+  hardware.uinput.enable = true;
+  hardware.bluetooth = {
+  enable = true;
+  powerOnBoot = true;
+  settings = {
+    General = {
+      # Shows battery charge of connected devices on supported
+      # Bluetooth adapters. Defaults to 'false'.
+      Experimental = true;
+      # When enabled other devices can connect faster to us, however
+      # the tradeoff is increased power consumption. Defaults to
+      # 'false'.
+      FastConnectable = true;
+    };
+    Policy = {
+      # Enable all controllers when they are found. This includes
+      # adapters present on start as well as adapters that are plugged
+      # in later on. Defaults to 'true'.
+      AutoEnable = true;
+    };
+  };
+};
+
   # https://discourse.nixos.org/t/how-to-automatically-update-flakes/72426/8
   systemd.services.nixos-upgrade = {
     after = [ "flake-update.service" ];
@@ -60,6 +87,7 @@
   ];
   boot.kernelModules = [
     "v4l2loopback"
+    "uinput"
   ];
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -260,6 +288,7 @@
 
   services.flatpak.packages = [
     "org.deskflow.deskflow" # KB/Mouse Sharing
+    "net.opentabletdriver.OpenTabletDriver" # Tablet driver
     "com.github.tchx84.Flatseal" # Flatpak sandbox configuration
     "com.bitwarden.desktop"
     # Browser / Email
@@ -400,6 +429,7 @@
     rust-analyzer
 
     prismlauncher
+    zotero
   ];
 
   programs.zsh = {

@@ -17,7 +17,7 @@
       #url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    
+
     plasma-manager = {
       url = "github:nix-community/plasma-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -51,7 +51,7 @@
         system = system;
         config.allowUnfree = true;
       };
-      
+
       smallPkgs = import small {
         system = system;
         config.allowUnfree = true;
@@ -59,14 +59,14 @@
 
       secureboot = [
         lanzaboote.nixosModules.lanzaboote
-	{
-	    boot.loader.systemd-boot.enable = nixpkgs.lib.mkForce false;
+        {
+          boot.loader.systemd-boot.enable = nixpkgs.lib.mkForce false;
 
-            boot.lanzaboote = {
-              enable = true;
-              pkiBundle = "/var/lib/sbctl";
-            };
-	}
+          boot.lanzaboote = {
+            enable = true;
+            pkiBundle = "/var/lib/sbctl";
+          };
+        }
       ];
 
       sopsModules = [
@@ -98,8 +98,9 @@
                 zed-editor = unstablePkgs.zed-editor;
                 reaper = unstablePkgs.reaper;
                 vscode = unstablePkgs.vscode;
-		osu-lazer-bin = smallPkgs.osu-lazer-bin;
-		neovim = unstablePkgs.neovim;
+                osu-lazer-bin = smallPkgs.osu-lazer-bin;
+                neovim = unstablePkgs.neovim;
+		opentabletdriver = unstablePkgs.opentabletdriver;
               })
             ];
             config.allowUnfree = true;
@@ -119,11 +120,17 @@
           inherit system;
           modules = gnome ++ secureboot ++ commonModules ++ [ ./config-silversurfer.nix ];
         };
-
         vfio = nixpkgs.lib.nixosSystem {
           inherit system;
           modules = secureboot ++ [
-            ./config-vfio.nix
+            (import ./config-vfio.nix { winVmName = "win11-ltsc-gpu"; })
+          ];
+        };
+
+        vfio2 = nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = secureboot ++ [
+            (import ./config-vfio.nix { winVmName = "win11-ltsc-gpu-vn"; })
           ];
         };
       };
