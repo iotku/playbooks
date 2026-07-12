@@ -16,7 +16,7 @@ let
     	'';
 in
 {
-  system.nixos.label = "vfio";
+  system.nixos.label = winVmName;
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
