@@ -271,10 +271,20 @@
       "kvm"
       "adbusers"
       "libvirtd"
+      "audio"
     ];
     packages = with pkgs; [
       #  thunderbird
     ];
+  };
+
+  # Should only apply to `nixos-rebuild build-vm`, we hope!
+  virtualisation.vmVariant = {
+    virtualisation = {
+      memorySize = 8096; # RAM size in MiB
+      cores = 6; 
+    };
+    users.users.luser.initialPassword = "nixfoo";
   };
 
   # Allow unfree packages
@@ -341,6 +351,7 @@
 
   programs.java.enable = true;
   programs.java.package = pkgs.temurin-bin; # Includes docs
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -431,6 +442,7 @@
     rustup
 
     clang-tools
+    ripgrep
     nodejs
     powershell # why not
     antimicrox

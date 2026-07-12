@@ -12,7 +12,6 @@
     };
 
     home-manager = {
-      #url = "github:nix-community/home-manager/release-25.11";
       url = "github:nix-community/home-manager/release-26.05";
       #url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -45,6 +44,7 @@
       ...
     }:
     let
+      username = "luser";
       system = "x86_64-linux";
 
       unstablePkgs = import unstable {
@@ -82,7 +82,17 @@
       ];
 
       gnome = [ ./gnome.nix ];
-      plasma = [ ./plasma.nix ];
+      plasma = [
+        ./plasma.nix
+        {
+          home-manager.sharedModules = [
+            plasma-manager.homeModules.plasma-manager
+          ];
+	  home-manager.users.luser.imports = [ ./plasma-manager.nix ];
+
+        }
+
+      ];
 
       commonModules = [
         nix-flatpak.nixosModules.nix-flatpak
@@ -100,7 +110,7 @@
                 vscode = unstablePkgs.vscode;
                 osu-lazer-bin = smallPkgs.osu-lazer-bin;
                 neovim = unstablePkgs.neovim;
-		opentabletdriver = unstablePkgs.opentabletdriver;
+                opentabletdriver = unstablePkgs.opentabletdriver;
               })
             ];
             config.allowUnfree = true;
