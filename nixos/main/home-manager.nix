@@ -10,8 +10,9 @@
     { pkgs, ... }:
     {
       imports = [ ./dconf.nix ];
-      home.packages = [ pkgs.ncdu ];
+      home.packages = [];
       programs.bash.enable = true;
+
 
       # The state version is required and should stay at the version you
       # originally installed.

@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 {
   # Enable plasma6
   services.displayManager.sddm.enable = true;
@@ -8,4 +13,5 @@
     kdePackages.kclock
     kdePackages.kcalc
   ];
+
 }
