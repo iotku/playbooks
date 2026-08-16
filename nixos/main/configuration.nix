@@ -269,7 +269,7 @@
       domain = "@audio";
       type = "-";
       item = "memlock";
-      value = "524288";
+      value = "536870912";
     }
   ];
   users.defaultUserShell = pkgs.zsh;
@@ -295,7 +295,7 @@
   virtualisation.vmVariant = {
     virtualisation = {
       memorySize = 8096; # RAM size in MiB
-      cores = 6; 
+      cores = 6;
     };
     users.users.luser.initialPassword = "nixfoo";
   };
@@ -416,6 +416,8 @@
 
     # Communication
     signal-desktop
+    weechat
+    aspell-en
 
     # Virtualization / Containers
     podman-compose
@@ -461,6 +463,7 @@
     powershell # why not
     antimicrox
     nixfmt
+    nvd
 
     # Language Servers
     nil

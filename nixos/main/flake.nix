@@ -27,7 +27,6 @@
       url = "github:nix-community/lanzaboote/v1.0.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
   };
 
   outputs =
@@ -88,7 +87,7 @@
           home-manager.sharedModules = [
             plasma-manager.homeModules.plasma-manager
           ];
-	  home-manager.users.luser.imports = [ ./plasma-manager.nix ];
+          home-manager.users.luser.imports = [ ./plasma-manager.nix ];
 
         }
 
@@ -103,6 +102,9 @@
         {
           nixpkgs = {
             overlays = [
+              (self: super: {
+                aspell-en = super.aspellWithDicts (d: [ d.en ]);
+              })
               (final: prev: {
                 readest = unstablePkgs.readest;
                 zed-editor = unstablePkgs.zed-editor;
@@ -111,7 +113,18 @@
                 osu-lazer-bin = smallPkgs.osu-lazer-bin;
                 neovim = unstablePkgs.neovim;
                 opentabletdriver = unstablePkgs.opentabletdriver;
+                blender-rocm = prev.symlinkJoin {
+                  name = "blender-rocm";
+                  paths = [ prev.pkgsRocm.blender ];
+
+                  nativeBuildInputs = [ prev.makeWrapper ];
+
+                  postBuild = ''
+                    wrapProgram $out/bin/blender --set LD_PRELOAD "${prev.rocmPackages.rocm-comgr}/lib/libamd_comgr.so.3"
+                  '';
+                };
               })
+
             ];
             config.allowUnfree = true;
           };
