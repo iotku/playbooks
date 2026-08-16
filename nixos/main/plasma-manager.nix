@@ -11,10 +11,10 @@
     workspace = {
       clickItemTo = "open"; # If you liked the click-to-open default from plasma 5
       lookAndFeel = "org.kde.breezedark.desktop";
-           cursor = {
-             #theme = "Bibata-Modern-Ice";
-            size = 24;
-          };
+      cursor = {
+        #theme = "Bibata-Modern-Ice";
+        size = 24;
+      };
       #     iconTheme = "Papirus-Dark";
       #     wallpaper = "${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/Patak/contents/images/1080x1920.png";
     };
@@ -34,10 +34,10 @@
     };
 
     fonts = {
- #     general = {
- #       family = "JetBrains Mono";
- #       pointSize = 10;
- #     };
+      #     general = {
+      #       family = "JetBrains Mono";
+      #       pointSize = 10;
+      #     };
     };
 
     panels = [
@@ -65,10 +65,78 @@
                 "applications:org.mozilla.firefox.desktop"
                 "applications:org.telegram.desktop.desktop"
                 "applications:signal.desktop"
-		"applications:steam.desktop"
+                "applications:steam.desktop"
               ];
             };
           }
+
+          {
+            name = "org.kde.plasma.systemmonitor";
+
+            config = {
+              Appearance = {
+                chartFace = "org.kde.ksysguard.barchart";
+                title = "CPU Usage";
+              };
+
+              Sensors = {
+                highPrioritySensorIds = ''["cpu/cpu\\\\d+/system"]'';
+                totalSensors = ''["cpu/cpu\\\\d+/system"]'';
+              };
+
+              "org.kde.ksysguard.barchart/General.rangeAuto" = false;
+              "org.kde.ksysguard.barchart/General.showGridLines" = false;
+              "org.kde.ksysguard.barchart/General.showLegend" = false;
+            };
+          }
+
+          {
+            name = "org.kde.plasma.systemmonitor";
+
+            config = {
+              Appearance = {
+                chartFace = "org.kde.ksysguard.piechart";
+                title = "GPU Ram";
+              };
+              Sensors = {
+                highPrioritySensorIds = ''["gpu/all/usedVram"]'';
+                totalSensors = ''["gpu/all/usedVram"]'';
+              };
+            };
+          }
+
+          {
+            name = "org.kde.plasma.systemmonitor";
+
+            config = {
+              Appearance = {
+                chartFace = "org.kde.ksysguard.piechart";
+                title = "GPU Usage";
+              };
+              Sensors = {
+                highPrioritySensorIds = ''["gpu/all/usage"]'';
+                totalSensors = ''["gpu/all/usage"]'';
+              };
+            };
+          }
+
+          {
+            name = "org.kde.plasma.systemmonitor";
+
+            config = {
+              Appearance = {
+                chartFace = "org.kde.ksysguard.piechart";
+                title = "Physical RAM";
+              };
+
+              Sensors = {
+                highPrioritySensorIds = ''["memory/physical/usedPercent"]'';
+                lowPrioritySensorIds = ''["memory/physical/free"]'';
+                totalSensors = ''["memory/physical/usedPercent"]'';
+              };
+            };
+          }
+
           # Or you can do it manually, for example:
           # widget will add them with the default configuration.
           "org.kde.plasma.marginsseparator"
