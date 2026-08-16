@@ -80,18 +80,23 @@
     };
   };
 
-  services.udev.packages = [ pkgs.yubikey-personalization ];
-  #boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
-  boot.kernelPackages = pkgs.linuxPackages;
+  services.udev.packages = [
+    pkgs.yubikey-personalization
+    pkgs.ddcutil
+  ];
+
+  boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
+  # boot.kernelPackages = pkgs.linuxPackages;
   #boot.kernelPackages = pkgs.linuxPackages_latest;
   #boot.kernelPackages = pkgs.linuxPackages_6_18;
-
   boot.kernelParams = [
-    #   "mitigations=off" # Super insecure! Nice!
+    #"mitigations=off" # Super insecure! Nice!
     "mitigations=auto,nosmt"
   ];
+
   boot.kernelModules = [
     "v4l2loopback"
+    "i2c-dev"
     "uinput"
   ];
   # Bootloader.
@@ -102,6 +107,8 @@
   boot.supportedFilesystems = [ "ntfs" ];
   services.udisks2.enable = true;
 
+  # for ddcutil
+  hardware.i2c.enable = true;
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Enable networking
@@ -275,6 +282,7 @@
       "wheel"
       "kvm"
       "adbusers"
+      "i2c"
       "libvirtd"
       "audio"
     ];
@@ -418,6 +426,7 @@
     # Hardware specific
     solaar # Logitech Mice
     #nvtopPackages.nvidia
+    ddcutil
     sdparm
 
     # h4x
