@@ -14,11 +14,16 @@
     "flakes"
   ];
 
+  environment.sessionVariables = {
+    PROTON_ENABLE_WAYLAND = "1";
+    SDL_VIDEODRIVER= "wayland";
+  };
+
   nix.settings.download-buffer-size = 134217728;
   nix.settings.auto-optimise-store = true; # Optimize every build
 
   hardware.opentabletdriver.enable = true;
-  hardware.opentabletdriver.daemon.enable = true;
+  hardware.opentabletdriver.daemon.enable = false;
 
   # Required by OpenTabletDriver
   hardware.uinput.enable = true;
