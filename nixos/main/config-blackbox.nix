@@ -4,6 +4,29 @@
   imports = [
     ./containers/securebox.nix
   ];
+
+  # Override firmware until https://gitlab.freedesktop.org/drm/amd/-/work_items/5615 is fixed in nixpkgs version
+
+  hardware.firmware = [
+    (pkgs.linux-firmware.overrideAttrs (oldAttrs: {
+      src = pkgs.fetchgit {
+        url = "https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git";
+        rev = "b2722d241309a1872446c1d00c2e812bad055f89";
+        sha256 = "sha256-nSoJhgI4hAxtNmnj5M6ticzuBSt9uNAYcmc1VR/yXxE=";
+      };
+    }))
+  ];
+
+  nixpkgs.config.rocmSupport = true;
+
+  environment.systemPackages = with pkgs; [
+    blender-rocm
+    rocmPackages.clr
+    rocmPackages.hipcc
+    rocmPackages.rocminfo
+    rocmPackages.amdsmi
+    rocmPackages.hiprt
+  ];
   networking.hostName = "blackbox"; # Define your hostname.
   powerManagement.cpuFreqGovernor = "performance";
   nix.gc = {
