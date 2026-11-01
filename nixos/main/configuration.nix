@@ -60,45 +60,14 @@
     };
   };
 
-  # https://discourse.nixos.org/t/how-to-automatically-update-flakes/72426/8
-  systemd.services.nixos-upgrade = {
-    after = [ "flake-update.service" ];
-    requires = [ "flake-update.service" ];
-  };
-
-  systemd.services = {
-    flake-update = {
-      description = "Update flake inputs";
-      unitConfig = {
-        StartLimitIntervalSec = 300;
-        StartLimitBurst = 5;
-      };
-      serviceConfig = {
-        WorkingDirectory = "/etc/nixos";
-        ExecStartPre = "${pkgs.networkmanager}/bin/nm-online";
-        ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.git}/bin/git add .;${pkgs.git}/bin/git commit -m 'autoupdate';${pkgs.nix}/bin/nix flake update'";
-        Restart = "on-failure";
-        RestartSec = "30";
-        Type = "oneshot";
-        User = "root";
-      };
-      path = [
-        pkgs.nix
-        pkgs.git
-        pkgs.host
-        pkgs.networkmanager
-      ];
-    };
-  };
-
   services.udev.packages = [
     pkgs.yubikey-personalization
     pkgs.ddcutil
   ];
 
-  boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
+  #boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
   # boot.kernelPackages = pkgs.linuxPackages;
-  #boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
   #boot.kernelPackages = pkgs.linuxPackages_6_18;
   boot.kernelParams = [
     #"mitigations=off" # Super insecure! Nice!
@@ -110,6 +79,7 @@
     "i2c-dev"
     "uinput"
   ];
+
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -178,9 +148,6 @@
     enable = true;
     libraries = pkgs.steam-run.args.multiPkgs pkgs;
   };
-
-  # They see me scrollin' they hatin'
-  #programs.niri.enable = true;
 
   fonts.fontDir.enable = true;
   fonts.enableDefaultPackages = true;
@@ -296,6 +263,8 @@
       "i2c"
       "libvirtd"
       "audio"
+      "video"
+      "render"
     ];
     packages = with pkgs; [
       #  thunderbird
@@ -357,7 +326,6 @@
     # Media
     "com.calibre_ebook.calibre"
     "com.yacreader.YACReader"
-    "com.obsproject.Studio"
     # Gamering
     "com.heroicgameslauncher.hgl"
     "net.pcsx2.PCSX2"
@@ -379,6 +347,8 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    pipewire.jack
+    obs-studio
     xfsprogs
     sbctl
     osu-lazer-bin
@@ -403,12 +373,6 @@
     wireguard-tools
     ncdu
 
-    # for niri
-    #alacritty
-    #fuzzel
-    #swaylock
-    #waybar
-
     # Multimedia
     supersonic
     mpv
@@ -424,6 +388,7 @@
     localsend
     furnace
     unrar
+    #android-file-transfer
 
     # Communication
     signal-desktop
@@ -437,7 +402,7 @@
     pciutils
 
     # Hardware specific
-    solaar # Logitech Mice
+    # solaar # Logitech Mice # BROKE MY BUILD !!!
     #nvtopPackages.nvidia
     ddcutil
     sdparm
@@ -453,6 +418,7 @@
     reaper
     reaper-sws-extension
     reaper-reapack-extension
+
     # Unstable overlays
     readest
     zed-editor
