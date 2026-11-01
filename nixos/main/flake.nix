@@ -4,6 +4,15 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     small.url = "github:NixOS/nixpkgs/nixos-26.05-small";
+    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    quickshell = {
+      # add ?ref=<tag> to track a tag
+      url = "git+https://git.outfoxxed.me/quickshell/quickshell";
+      # Mismatched system dependencies will lead to crashes and other issues.
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    vicinae.url = "github:vicinaehq/vicinae";
 
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.7.0";
     sops-nix = {
@@ -40,8 +49,10 @@
       home-manager,
       plasma-manager,
       lanzaboote,
+      hyprland,
+      vicinae,
       ...
-    }:
+    }@inputs:
     let
       username = "luser";
       system = "x86_64-linux";
@@ -93,6 +104,16 @@
 
       ];
 
+      hypr = [
+        hyprland.nixosModules.default
+        ./hyprland.nix
+        {
+          home-manager.sharedModules = [
+            vicinae.homeManagerModules.default
+          ];
+        }
+      ];
+
       commonModules = [
         nix-flatpak.nixosModules.nix-flatpak
         ./configuration.nix
@@ -108,10 +129,11 @@
               (final: prev: {
                 readest = unstablePkgs.readest;
                 zed-editor = unstablePkgs.zed-editor;
-                reaper = unstablePkgs.reaper;
+               # reaper = unstablePkgs.reaper; # Having segfaults - 11/1/26
                 vscode = unstablePkgs.vscode;
                 osu-lazer-bin = smallPkgs.osu-lazer-bin;
                 neovim = unstablePkgs.neovim;
+                zluda = unstablePkgs.zluda;
                 opentabletdriver = unstablePkgs.opentabletdriver;
                 blender-rocm = prev.symlinkJoin {
                   name = "blender-rocm";
@@ -135,6 +157,7 @@
     {
       nixosConfigurations = {
         blackbox = nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit inputs; }; # this is the important part
           inherit system;
           modules = plasma ++ secureboot ++ sopsModules ++ commonModules ++ [ ./config-blackbox.nix ];
         };
